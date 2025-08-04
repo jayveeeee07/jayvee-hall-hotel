@@ -3,32 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - Jayvee Hall</title>
+  <title>Home - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="script.js"></script>
 </head>
 <body>
+
+  <!-- HEADER / NAVBAR -->
+  <header class="navbar">
+    <div class="logo">🏨 Jayvee Hall of Mansion</div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="home.html" class="active">Home</a></li>
+        <li><a href="#">Rooms</a></li>
+        <li><a href="#">Message</a></li>
+        <li><a href="#">Notification</a></li>
+        <li><a href="#">Contact Service</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <!-- HOME CONTENT -->
   <div class="home-container fade-in">
     <h2>Welcome to Jayvee Hall of Mansion</h2>
-    <p>Browse our luxurious rooms below and click to see details.</p>
+    <p>Experience luxury and comfort in the heart of Malungon, Sarangani. Explore our elegant rooms and choose the perfect stay for you.</p>
 
-    <!-- Slider Container -->
-    <div class="slider-container">
-      <button class="slide-btn left" onclick="prevSlide()">&#10094;</button>
-      
-      <div class="slider">
-        <div class="slide">
-          <img src="assets/room1.jpg" alt="Room 1" onclick="showRoomDetails(0)">
-        </div>
-        <div class="slide">
-          <img src="assets/room2.jpg" alt="Room 2" onclick="showRoomDetails(1)">
-        </div>
-        <div class="slide">
-          <img src="assets/room3.jpg" alt="Room 3" onclick="showRoomDetails(2)">
+    <!-- Grid Layout for Rooms -->
+    <div class="room-grid">
+      <div class="room-card">
+        <img src="assets/room1.jpg" alt="Deluxe Room">
+        <h3>Deluxe Room</h3>
+        <p>₱3,500 / night</p>
+        <div class="card-buttons">
+          <button onclick="showRoomDetails(0)">View Details</button>
+          <button onclick="window.location.href='booking.html'">Book Now</button>
         </div>
       </div>
 
-      <button class="slide-btn right" onclick="nextSlide()">&#10095;</button>
+      <div class="room-card">
+        <img src="assets/room2.jpg" alt="Executive Suite">
+        <h3>Executive Suite</h3>
+        <p>₱5,200 / night</p>
+        <div class="card-buttons">
+          <button onclick="showRoomDetails(1)">View Details</button>
+          <button onclick="window.location.href='booking.html'">Book Now</button>
+        </div>
+      </div>
+
+      <div class="room-card">
+        <img src="assets/room3.jpg" alt="Family Room">
+        <h3>Family Room</h3>
+        <p>₱4,000 / night</p>
+        <div class="card-buttons">
+          <button onclick="showRoomDetails(2)">View Details</button>
+          <button onclick="window.location.href='booking.html'">Book Now</button>
+        </div>
+      </div>
+
+      <div class="room-card">
+        <img src="assets/room4.jpg" alt="Presidential Suite">
+        <h3>Presidential Suite</h3>
+        <p>₱8,000 / night</p>
+        <div class="card-buttons">
+          <button onclick="showRoomDetails(3)">View Details</button>
+          <button onclick="window.location.href='booking.html'">Book Now</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -39,9 +81,10 @@
       <h3 id="roomTitle"></h3>
       <p id="roomDesc"></p>
       <p id="roomPrice"></p>
-      <button onclick="alert('Proceed to booking form...')">Interested</button>
+      <button onclick="window.location.href='booking.html'">Interested</button>
       <button onclick="closeRoomModal()">Not Interested</button>
     </div>
   </div>
+
 </body>
   </html>
