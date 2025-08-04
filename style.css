@@ -40,57 +40,8 @@ input, select {
   border: 1px solid #ccc;
 }
 
-/* Header / Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #0077cc;
-  color: white;
-  padding: 10px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+/* Header / Navbar */;
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-img {
-  height: 40px;
-  width: 40px;
-  border-radius: 50%;
-}
-
-.logo-text {
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.nav-links {
-  display: flex;
-  list-style: none;
-  gap: 20px;
-}
-
-.nav-links li a {
-  color: white;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.nav-links li a:hover, .nav-links li a.active {
-  text-decoration: underline;
-}
-
-.menu-toggle {
-  display: none;
-  font-size: 24px;
-  cursor: pointer;
-}
 
 /* Room Grid - Same Size Cards */
 .room-grid {
