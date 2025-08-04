@@ -166,3 +166,43 @@ function downloadReceipt(){
   const element = document.getElementById('receipt');
   html2pdf().from(element).save('booking-receipt.pdf');
 }
+
+let currentSlide = 0;
+const slides = document.querySelectorAll(".slide");
+const totalSlides = slides.length;
+
+function showSlide(index) {
+  if (!slides.length) return;
+  if (index >= totalSlides) currentSlide = 0;
+  else if (index < 0) currentSlide = totalSlides - 1;
+  else currentSlide = index;
+
+  const slider = document.querySelector(".slider");
+  slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+}
+
+function nextSlide() { showSlide(currentSlide + 1); }
+function prevSlide() { showSlide(currentSlide - 1); }
+
+// Room details
+const rooms = [
+  { title: "Deluxe Room", desc: "Spacious deluxe room with a king-sized bed, air-conditioning, and private balcony. Enjoy the serene view of the mountains and luxurious amenities for a comfortable stay.", price: "₱3,500/night" },
+  { title: "Executive Suite", desc: "Premium suite with a living room, smart TV, high-speed Wi-Fi, and complimentary breakfast. Perfect for business or leisure stays.", price: "₱5,200/night" },
+  { title: "Family Room", desc: "Large family room with two queen-sized beds, private bathroom, and mini kitchen. Ideal for group or family vacations.", price: "₱4,000/night" }
+];
+
+function showRoomDetails(index) {
+  document.getElementById("roomTitle").innerText = rooms[index].title;
+  document.getElementById("roomDesc").innerText = rooms[index].desc;
+  document.getElementById("roomPrice").innerText = rooms[index].price;
+  document.getElementById("roomModal").style.display = "block";
+}
+
+function closeRoomModal() {
+  document.getElementById("roomModal").style.display = "none";
+}
+
+// Initialize first slide
+document.addEventListener("DOMContentLoaded", () => {
+  showSlide(currentSlide);
+});
