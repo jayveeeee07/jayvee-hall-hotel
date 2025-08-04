@@ -1,38 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home - Jayvee Hall</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Jayvee Hall</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-<div class="dashboard fade-in">
-  <h2>Our Rooms</h2>
-  <div class="room-slider">
-    <button onclick="currentRoom=(currentRoom+2)%rooms.length;showRoom(currentRoom)">&#8592;</button>
-    <img id="roomImage" src="assets/room1.jpg" alt="Room">
-    <button onclick="currentRoom=(currentRoom+1)%rooms.length;showRoom(currentRoom)">&#8594;</button>
+  <div class="home-container fade-in">
+    <h2>Welcome to Jayvee Hall of Mansion</h2>
+    <p>Browse our luxurious rooms below and click to see details.</p>
+
+    <!-- Slider Container -->
+    <div class="slider-container">
+      <button class="slide-btn left" onclick="prevSlide()">&#10094;</button>
+      
+      <div class="slider">
+        <div class="slide">
+          <img src="assets/room1.jpg" alt="Room 1" onclick="showRoomDetails(0)">
+        </div>
+        <div class="slide">
+          <img src="assets/room2.jpg" alt="Room 2" onclick="showRoomDetails(1)">
+        </div>
+        <div class="slide">
+          <img src="assets/room3.jpg" alt="Room 3" onclick="showRoomDetails(2)">
+        </div>
+      </div>
+
+      <button class="slide-btn right" onclick="nextSlide()">&#10095;</button>
+    </div>
   </div>
-  <h3 id="roomTitle">Deluxe Suite</h3>
-  <p id="roomDesc">Spacious room with king bed...</p>
-  <button onclick="window.location.href='booking.html'">Interested</button>
-  <button onclick="alert('Maybe next time!')">Not Interested</button>
-</div>
 
-<div class="navbar">
-  <button onclick="window.location.href='home.html'">HOME</button>
-  <button onclick="alert('Scroll rooms manually!')">ROOM</button>
-  <button onclick="alert('No new messages')">MESSAGE</button>
-  <button onclick="alert('No new notifications')">NOTIFICATION</button>
-  <button onclick="alert('Admin Only')">SETTING</button>
-  <button onclick="alert('Contact via Messenger Bot!')">CONTACT SERVICE</button>
-  <button onclick="alert('FAQ: This site allows booking rooms.')">FAQ</button>
-</div>
-
-<script>
-showRoom(currentRoom);
-</script>
+  <!-- Modal for Room Details -->
+  <div id="roomModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeRoomModal()">&times;</span>
+      <h3 id="roomTitle"></h3>
+      <p id="roomDesc"></p>
+      <p id="roomPrice"></p>
+      <button onclick="alert('Proceed to booking form...')">Interested</button>
+      <button onclick="closeRoomModal()">Not Interested</button>
+    </div>
+  </div>
 </body>
   </html>
