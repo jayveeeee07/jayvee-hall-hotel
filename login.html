@@ -1,22 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Jayvee Hall</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Jayvee Hall</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-<div class="form-container fade-in">
-  <h2>Welcome to Jayvee Hall of Mansion Dashboard</h2>
-  <form id="loginForm">
-    <input type="text" name="username" placeholder="Enter Username" required>
-    <input type="password" name="password" placeholder="Enter Password" required>
-    <button type="submit">Login</button>
-    <button type="button" onclick="window.location.href='signup.html'">Register</button>
-  </form>
-</div>
-<script> handleLogin('loginForm'); </script>
+  <div class="form-container fade-in">
+    <h2>Welcome to Jayvee Hall of Mansion Dashboard</h2>
+    <form id="loginForm">
+      <input type="text" name="username" placeholder="Enter Username" required>
+      <input type="password" name="password" placeholder="Enter Password" required>
+      <button type="submit">Login</button>
+      <button type="button" onclick="window.location.href='signup.html'">Register</button>
+    </form>
+  </div>
+
+  <script>
+    // Credential validation
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = this.username.value.trim();
+      const password = this.password.value.trim();
+
+      // Get all users from LocalStorage
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      // Find user with matching credentials
+      const foundUser = users.find(u => u.username === username && u.password === password);
+
+      if (foundUser) {
+        alert(`Welcome back, ${foundUser.firstName || username}!`);
+        localStorage.setItem("loggedInUser", JSON.stringify(foundUser));
+        window.location.href = "home.html"; // ✅ Go to home.html if credentials are correct
+      } else {
+        alert("Invalid Username or Password. Please register first.");
+      }
+    });
+  </script>
 </body>
   </html>
