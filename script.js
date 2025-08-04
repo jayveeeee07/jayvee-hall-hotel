@@ -23,6 +23,65 @@ function handleSignup(formId) {
   });
 }
 
+// Load users from LocalStorage
+function loadData(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+// Save data to LocalStorage
+function saveData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// Handle Login
+function handleLogin(formId) {
+  const form = document.getElementById(formId);
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const username = form.username.value.trim();
+    const password = form.password.value.trim();
+
+    const users = loadData("users");
+
+    // Check if user exists
+    const foundUser = users.find(u => u.username === username && u.password === password);
+
+    if (foundUser) {
+      alert(`Welcome back, ${foundUser.firstName || foundUser.username}!`);
+      localStorage.setItem("loggedInUser", JSON.stringify(foundUser));
+      window.location.href = "home.html"; // ✅ Redirect to home.html
+    } else {
+      alert("Invalid Username or Password. Please register first.");
+    }
+  });
+}
+
+// Handle Signup
+function handleSignup(formId) {
+  const form = document.getElementById(formId);
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const user = {};
+    formData.forEach((value, key) => user[key] = value);
+
+    const users = loadData("users");
+
+    // Prevent duplicate username
+    if (users.find(u => u.username === user.username)) {
+      alert("Username already exists. Please choose another.");
+      return;
+    }
+
+    users.push(user);
+    saveData("users", users);
+
+    alert("Account created successfully! Please login.");
+    window.location.href = "login.html"; // ✅ Go back to login
+  });
+}
 // Login
 function handleLogin(formId) {
   const form = document.getElementById(formId);
