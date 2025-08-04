@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Jayvee Hall</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+      const usersTable = document.getElementById("usersTable");
+      users.forEach(u => {
+        let row = `<tr><td>${u.username}</td><td>${u.email}</td><td>${u.age}</td><td>${u.contact}</td></tr>`;
+        usersTable.innerHTML += row;
+      });
+
+      const bookingsTable = document.getElementById("bookingsTable");
+      bookings.forEach(b => {
+        let row = `<tr><td>${b.name}</td><td>${b.people}</td><td>${b.date}</td><td>${b.days}</td><td>${b.payment}</td></tr>`;
+        bookingsTable.innerHTML += row;
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="form-container fade-in">
+    <h2>Admin Panel</h2>
+    
+    <h3>Registered Users</h3>
+    <table border="1" width="100%">
+      <tr><th>Username</th><th>Email</th><th>Age</th><th>Contact</th></tr>
+      <tbody id="usersTable"></tbody>
+    </table>
+
+    <h3>Bookings</h3>
+    <table border="1" width="100%">
+      <tr><th>Name</th><th>People</th><th>Date</th><th>Days</th><th>Payment</th></tr>
+      <tbody id="bookingsTable"></tbody>
+    </table>
+
+    <h3>Notifications</h3>
+    <ul>
+      <li>System started successfully.</li>
+      <li>Last user signup: <span id="lastUser">Check table above</span></li>
+    </ul>
+
+    <button onclick="window.location.href='login.html'">Logout</button>
+  </div>
+</body>
+  </html>
