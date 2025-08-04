@@ -206,3 +206,22 @@ function closeRoomModal() {
 document.addEventListener("DOMContentLoaded", () => {
   showSlide(currentSlide);
 });
+
+// Room Details
+const rooms = [
+  { title: "Deluxe Room", desc: "A spacious deluxe room with a king-sized bed, air-conditioning, and a private balcony. Enjoy the scenic mountain view and high-end amenities for a truly relaxing experience. Perfect for couples or solo travelers who want a comfortable yet affordable stay.", price: "₱3,500 / night" },
+  { title: "Executive Suite", desc: "Our Executive Suite features a luxurious living space with a smart TV, high-speed Wi-Fi, and complimentary breakfast. Ideal for business travelers or leisure stays with added privacy and comfort.", price: "₱5,200 / night" },
+  { title: "Family Room", desc: "Perfect for family or group stays, this spacious room offers two queen-sized beds, a private bathroom, and a mini kitchen. Enjoy a fun and cozy stay with all the conveniences you need.", price: "₱4,000 / night" },
+  { title: "Presidential Suite", desc: "The epitome of luxury, our Presidential Suite includes a king-sized bed, living area, private jacuzzi, and a stunning panoramic view. Experience elegance and exclusivity like never before.", price: "₱8,000 / night" }
+];
+
+function showRoomDetails(index) {
+  document.getElementById("roomTitle").innerText = rooms[index].title;
+  document.getElementById("roomDesc").innerText = rooms[index].desc;
+  document.getElementById("roomPrice").innerText = rooms[index].price;
+  document.getElementById("roomModal").style.display = "block";
+}
+
+function closeRoomModal() {
+  document.getElementById("roomModal").style.display = "none";
+    }
