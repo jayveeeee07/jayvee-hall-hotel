@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmation - Jayvee Hall</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+<script src="html2pdf.bundle.min.js"></script>
+</head>
+<body>
+<div class="form-container fade-in" id="receipt">
+  <h2>Booking Confirmation</h2>
+  <div id="bookingDetails"></div>
+  <button onclick="downloadReceipt()">Download this Receipt</button>
+  <button onclick="window.location.href='home.html'">Back to Home</button>
+</div>
+
+<script>
+const bookings = loadData('bookings');
+const last = bookings[bookings.length-1];
+const details = document.getElementById('bookingDetails');
+if(last){
+  details.innerHTML = `
+    <p>Name: ${last.name}</p>
+    <p>Number of People: ${last.people}</p>
+    <p>Date of Stay: ${last.date}</p>
+    <p>Days: ${last.days}</p>
+    <p>Payment: ${last.payment}</p>
+    ${last.bank ? `<p>Bank: ${last.bank}</p>` : ""}
+  `;
+}
+</script>
+</body>
+</html>
