@@ -43,6 +43,33 @@ function handleLogin(formId) {
   });
 }
 
+// Room slider data
+const rooms = [
+  {
+    title: "Deluxe Suite",
+    image: "assets/room1.jpg",
+    desc: "Our Deluxe Suite offers a king-sized bed, private balcony, and complimentary breakfast. Perfect for couples seeking luxury in Malungon, Sarangani. Price: ₱4,500/night."
+  },
+  {
+    title: "Standard Room",
+    image: "assets/room2.jpg",
+    desc: "The Standard Room provides a cozy queen-sized bed, work desk, and smart TV. Ideal for business or solo travelers. Price: ₱2,500/night."
+  },
+  {
+    title: "Family Room",
+    image: "assets/room3.jpg",
+    desc: "Spacious Family Room with two queen beds, sofa area, and mini kitchen. Accommodates up to 4 people. Price: ₱6,000/night."
+  }
+];
+
+let currentRoom = 0;
+
+function showRoom(index){
+  const room = rooms[index];
+  document.getElementById("roomImage").src = room.image;
+  document.getElementById("roomTitle").innerText = room.title;
+  document.getElementById("roomDesc").innerText = room.desc;
+             }
 // Room Slider Logic
 const rooms = [
   {name:"Deluxe Suite", price:"₱3,500/night", img:"assets/room1.jpg", desc:"Spacious room with king bed, balcony view of Sarangani mountains, and modern amenities."},
