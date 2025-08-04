@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Booking - Jayvee Hall</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+</head>
+<body>
+<div class="form-container fade-in">
+  <h2>Online Reservation</h2>
+  <form id="bookingForm">
+    <input type="text" name="name" placeholder="Your Name" required>
+    <input type="number" name="people" placeholder="Number of People" required>
+    <input type="date" name="date" required>
+    <input type="number" name="days" placeholder="Number of Days" required>
+    <select name="payment" id="paymentMethod" required>
+      <option value="">Select Payment Method</option>
+      <option>Cash on Arrival</option>
+      <option>Online Payment</option>
+    </select>
+    <div id="bankList" style="display:none;">
+      <select name="bank">
+        <option>BDO</option>
+        <option>Landbank</option>
+        <option>UnionBank</option>
+      </select>
+      <p>[Face Scan Verification Simulated]</p>
+    </div>
+    <button type="submit">Confirm Booking</button>
+  </form>
+</div>
+<script>
+document.getElementById('paymentMethod').addEventListener('change',function(){
+  document.getElementById('bankList').style.display = this.value==="Online Payment"?"block":"none";
+});
+handleBooking('bookingForm');
+</script>
+</body>
+                                             </html>
