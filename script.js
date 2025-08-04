@@ -225,3 +225,87 @@ function showRoomDetails(index) {
 function closeRoomModal() {
   document.getElementById("roomModal").style.display = "none";
     }
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const bookingForm = document.getElementById("bookingForm");
+
+  // LOGIN VALIDATION
+  if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
+
+      // Admin login
+      if(username === "admin" && password === "admin123") {
+        alert("Admin login successful!");
+        window.location.href = "admin.html";
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if (user) {
+        alert("Login successful!");
+        window.location.href = "home.html";
+      } else {
+        alert("Invalid username or password!");
+      }
+    });
+  }
+
+  // SIGNUP
+  if (signupForm) {
+    signupForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const user = {
+        photo: document.getElementById("photo").value,
+        fname: document.getElementById("fname").value,
+        mname: document.getElementById("mname").value,
+        lname: document.getElementById("lname").value,
+        suffix: document.getElementById("suffix").value,
+        sex: document.getElementById("sex").value,
+        status: document.getElementById("status").value,
+        bdate: document.getElementById("bdate").value,
+        age: document.getElementById("age").value,
+        address: document.getElementById("address").value,
+        contact: document.getElementById("contact").value,
+        email: document.getElementById("email").value,
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+      };
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("Account created successfully! Please log in.");
+      window.location.href = "login.html";
+    });
+  }
+
+  // BOOKING
+  if (bookingForm) {
+    bookingForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const booking = {
+        name: document.getElementById("bookName").value,
+        people: document.getElementById("numPeople").value,
+        date: document.getElementById("dateStay").value,
+        days: document.getElementById("numDays").value,
+        payment: document.getElementById("paymentMethod").value,
+      };
+
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      localStorage.setItem("bookingData", JSON.stringify(booking));
+
+      alert("Booking confirmed!");
+      window.location.href = "confirmation.html";
+    });
+  }
+});
