@@ -1,46 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signup - Jayvee Hall</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup - Jayvee Hall</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-<div class="form-container fade-in">
-  <h2>Create Your Account</h2>
-  <form id="signupForm">
-    <input type="file" name="photo" accept="image/*">
-    <input type="text" name="firstName" placeholder="First Name" required>
-    <input type="text" name="middleName" placeholder="Middle Name">
-    <input type="text" name="lastName" placeholder="Last Name" required>
-    <select name="suffix">
-      <option value="">N/A</option>
-      <option value="Jr">Jr</option>
-      <option value="Sr">Sr</option>
-    </select>
-    <select name="sex" required>
-      <option value="">Select Sex</option>
-      <option>Male</option>
-      <option>Female</option>
-      <option>Other</option>
-    </select>
-    <select name="status" required>
-      <option value="">Status</option>
-      <option>Single</option>
-      <option>Married</option>
-    </select>
-    <input type="date" name="birthdate" required>
-    <input type="number" name="age" placeholder="Age" required>
-    <input type="text" name="address" placeholder="Complete Address" required>
-    <input type="tel" name="phone" placeholder="Contact Number" required>
-    <input type="email" name="email" placeholder="Email Address" required>
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Create Account</button>
-  </form>
-</div>
-<script> handleSignup('signupForm'); </script>
+  <div class="form-container fade-in">
+    <h2>Create Your Account</h2>
+    <form id="signupForm" enctype="multipart/form-data">
+      <input type="file" name="photo" accept="image/*" required>
+      <input type="text" name="firstName" placeholder="First Name" required>
+      <input type="text" name="middleName" placeholder="Middle Name">
+      <input type="text" name="lastName" placeholder="Last Name" required>
+      <input type="text" name="suffixName" placeholder="Suffix Name (Optional)">
+      <select name="sex" required>
+        <option value="">Select Sex</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+      <select name="status" required>
+        <option value="">Select Status</option>
+        <option>Single</option>
+        <option>Married</option>
+        <option>Other</option>
+      </select>
+      <input type="date" name="birthdate" required>
+      <input type="number" name="age" placeholder="Enter Age" required>
+      <input type="text" name="address" placeholder="Full Address" required>
+      <input type="tel" name="contact" placeholder="Contact Number" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+
+      <div class="button-group">
+        <button type="submit">Sign Up</button>
+        <button type="button" onclick="window.location.href='login.html'">Back</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const user = {};
+      formData.forEach((value, key) => user[key] = value);
+
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+
+      // Check if username already exists
+      if (users.find(u => u.username === user.username)) {
+        alert("Username already exists. Please choose another.");
+        return;
+      }
+
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("Account created successfully! Please log in.");
+      window.location.href = "login.html"; // ✅ Redirect to login.html after signup
+    });
+  </script>
 </body>
-  </html>
+        </html>
