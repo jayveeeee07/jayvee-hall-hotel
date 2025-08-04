@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jayvee Hall of Mansion</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+</head>
+<body>
+<div class="welcome-container fade-in">
+  <h1>Welcome to Jayvee Hall of Mansion</h1>
+  <p>
+    Welcome to Jayvee Hall of Mansion, a luxurious yet cozy getaway nestled in the heart of Malungon, Sarangani. 
+    Our hotel offers elegant rooms, breathtaking mountain views, and world-class amenities designed to give you the ultimate relaxation.
+    Whether for family vacations, business trips, or romantic escapes, our warm staff ensures your stay is truly memorable.
+  </p>
+  <label><input type="checkbox" id="terms"> I agree to the Terms and Policy</label><br>
+  <button id="getStarted" disabled>Get Started</button>
+</div>
+<script>
+  const terms = document.getElementById('terms');
+  const btn = document.getElementById('getStarted');
+  terms.addEventListener('change',()=> btn.disabled = !terms.checked);
+  btn.addEventListener('click', ()=> window.location.href='login.html');
+</script>
+</body>
+    </html>
