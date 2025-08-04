@@ -72,3 +72,56 @@ input, select {
   from { opacity:0; transform:translateY(20px); }
   to { opacity:1; transform:translateY(0); }
 }
+
+body {
+  background: linear-gradient(135deg, #f7f7f7, #d1e0ff);
+  font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.fade-in {
+  animation: fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+button {
+  background: #2a72e5;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #1a4db0;
+}
+
+.room-slider img {
+  width: 300px;
+  height: 200px;
+  border-radius: 15px;
+  object-fit: cover;
+  margin: 10px;
+}
+
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255,255,255,0.9);
+  padding: 10px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+}
