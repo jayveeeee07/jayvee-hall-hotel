@@ -3,69 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signup - Jayvee Hall</title>
+  <title>Register - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+  <style>
+    /* Fullscreen Background */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('assets/bgindex.jpg') no-repeat center center/cover;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+    }
+
+    /* Dark overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 0;
+    }
+
+    /* Glassmorphic Register Card */
+    .register-container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 450px;
+      padding: 35px 30px;
+      border-radius: 15px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1.3s ease-in-out;
+    }
+
+    .register-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .register-container input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      background: rgba(255,255,255,0.85);
+      color: #333;
+    }
+
+    .register-container button {
+      width: 100%;
+      padding: 12px 0;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background: #28a745;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .register-container button:hover {
+      background: #218838;
+      transform: scale(1.05);
+    }
+
+    .register-container p {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .register-container a {
+      color: #00c3ff;
+      text-decoration: none;
+    }
+
+    .register-container a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      .register-container {
+        padding: 30px 20px;
+      }
+      .register-container h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="form-container fade-in">
-    <h2>Create Your Account</h2>
-    <form id="signupForm" enctype="multipart/form-data">
-      <input type="file" name="photo" accept="image/*" required>
-      <input type="text" name="firstName" placeholder="First Name" required>
-      <input type="text" name="middleName" placeholder="Middle Name">
-      <input type="text" name="lastName" placeholder="Last Name" required>
-      <input type="text" name="suffixName" placeholder="Suffix Name (Optional)">
-      <select name="sex" required>
-        <option value="">Select Sex</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
-      </select>
-      <select name="status" required>
-        <option value="">Select Status</option>
-        <option>Single</option>
-        <option>Married</option>
-        <option>Other</option>
-      </select>
-      <input type="date" name="birthdate" required>
-      <input type="number" name="age" placeholder="Enter Age" required>
-      <input type="text" name="address" placeholder="Full Address" required>
-      <input type="tel" name="contact" placeholder="Contact Number" required>
-      <input type="email" name="email" placeholder="Email Address" required>
-
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
-
-      <div class="button-group">
-        <button type="submit">Sign Up</button>
-        <button type="button" onclick="window.location.href='login.html'">Back</button>
-      </div>
-    </form>
+  <div class="register-container">
+    <h2>Create Account</h2>
+    <input type="text" id="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" placeholder="Last Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="register()">Register</button>
+    <p>Already have an account? <a href="login.html">Login</a></p>
   </div>
 
   <script>
-    document.getElementById("signupForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    function register() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-      const formData = new FormData(this);
-      const user = {};
-      formData.forEach((value, key) => user[key] = value);
-
-      let users = JSON.parse(localStorage.getItem("users")) || [];
-
-      // Check if username already exists
-      if (users.find(u => u.username === user.username)) {
-        alert("Username already exists. Please choose another.");
+      if (!firstName || !lastName || !email || !username || !password) {
+        alert("Please fill in all fields.");
         return;
       }
 
-      users.push(user);
-      localStorage.setItem("users", JSON.stringify(users));
+      // Retrieve users from localStorage
+      let users = JSON.parse(localStorage.getItem("users")) || [];
 
-      alert("Account created successfully! Please log in.");
-      window.location.href = "login.html"; // ✅ Redirect to login.html after signup
-    });
+      // Check for duplicate username
+      if (users.some(u => u.username === username)) {
+        alert("Username already exists. Choose another.");
+        return;
+      }
+
+      // Save new user
+      users.push({
+        firstName, lastName, email, username, password,
+        photo: "assets/default.png",
+        status: "Active",
+        timestamp: new Date().toLocaleString()
+      });
+
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Registration successful! You can now login.");
+      window.location.href = "login.html";
+    }
   </script>
 </body>
-        </html>
+</html>
