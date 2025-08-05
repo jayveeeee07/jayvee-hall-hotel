@@ -5,13 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      padding: 20px;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
     .booking-container {
       background: white;
       max-width: 500px;
@@ -20,36 +16,28 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    .booking-container h2 {
-      text-align: center;
-    }
-    .booking-container input, 
-    .booking-container select {
+    .booking-container h2 { text-align: center; }
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    .booking-container button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border: none;
-      background: #333;
+    button {
+      background: #28a745;
       color: white;
-      font-size: 16px;
+      border: none;
       cursor: pointer;
-      border-radius: 5px;
+      font-size: 16px;
     }
-    .booking-container button:hover {
-      background: #555;
-    }
+    button:hover { background: #218838; }
     .receipt {
       margin-top: 20px;
       padding: 10px;
       border: 2px dashed #999;
       background: #fafafa;
+      display: none;
     }
   </style>
 </head>
@@ -58,14 +46,22 @@
 <div class="booking-container" id="bookingSection">
   <h2>Online Reservation</h2>
   <form id="bookingForm">
-    <label>Selected Room:</label>
-    <input type="text" id="roomName" name="roomName" readonly required>
-
-    <label>Name:</label>
+    <label>Full Name:</label>
     <input type="text" name="fullName" placeholder="Enter Full Name" required>
 
     <label>Number of People:</label>
     <input type="number" name="numPeople" required>
+
+    <label>Room:</label>
+    <select name="roomName" required>
+      <option value="Deluxe Room">Deluxe Room</option>
+      <option value="Executive Suite">Executive Suite</option>
+      <option value="Family Room">Family Room</option>
+      <option value="Presidential Suite">Presidential Suite</option>
+    </select>
+
+    <label>Room Number:</label>
+    <input type="number" name="roomNo" placeholder="Enter Room Number" required>
 
     <label>Select Date of Stay:</label>
     <input type="date" name="dateStay" required>
@@ -83,33 +79,30 @@
     <div id="bankOptions" style="display:none;">
       <label>Select Bank:</label>
       <select name="bankSelect">
-        <option value="BDO">BDO</option>
-        <option value="Landbank">Landbank</option>
-        <option value="BPI">BPI</option>
+        <option value="Gcash">GCASH - 09464766208</option>
+        <option value="Seabank">SEABANK - 19169025449</option>
+        <option value="PayPal">PayPal - jayveecaringal07@gmail.com</option>
       </select>
     </div>
 
     <button type="submit">Confirm Booking</button>
   </form>
 
-  <div id="receipt" class="receipt" style="display:none;">
+  <div id="receipt" class="receipt">
     <h3>Booking Confirmation</h3>
     <p><strong>Room:</strong> <span id="rRoom"></span></p>
+    <p><strong>Room No:</strong> <span id="rRoomNo"></span></p>
     <p><strong>Name:</strong> <span id="rName"></span></p>
     <p><strong>Guests:</strong> <span id="rPeople"></span></p>
     <p><strong>Date of Stay:</strong> <span id="rDate"></span></p>
     <p><strong>Number of Days:</strong> <span id="rDays"></span></p>
     <p><strong>Payment:</strong> <span id="rPayment"></span></p>
-    <p><strong>Bank:</strong> <span id="rBank"></span></p>
+    <p><strong>Bank:</strong> <span id="rBank or N/A"></span></p>
     <button id="downloadReceipt">Download as PNG</button>
   </div>
 </div>
 
 <script>
-  // Load selected room from URL
-  const params = new URLSearchParams(window.location.search);
-  document.getElementById("roomName").value = params.get("room") || "No Room Selected";
-
   // Show bank options for online payment
   document.getElementById("paymentMethod").addEventListener("change", function() {
     document.getElementById("bankOptions").style.display = this.value === "Online" ? "block" : "none";
@@ -118,12 +111,12 @@
   // Handle booking form submission
   document.getElementById("bookingForm").addEventListener("submit", function(e) {
     e.preventDefault();
-
     const formData = new FormData(this);
     const booking = {
-      roomName: formData.get("roomName"),
       fullName: formData.get("fullName"),
       numPeople: formData.get("numPeople"),
+      roomName: formData.get("roomName"),
+      roomNo: formData.get("roomNo"),
       dateStay: formData.get("dateStay"),
       numDays: formData.get("numDays"),
       paymentMethod: formData.get("paymentMethod"),
@@ -131,13 +124,21 @@
       timestamp: new Date().toLocaleString()
     };
 
-    // Save to localStorage for Admin Panel
+    // Check for duplicate booking (same room and date)
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const duplicate = bookings.some(b => b.roomNo === booking.roomNo && b.dateStay === booking.dateStay);
+    if (duplicate) {
+      alert("❌ This room is already booked on the selected date.");
+      return;
+    }
+
+    // Save booking
     bookings.push(booking);
     localStorage.setItem("bookings", JSON.stringify(bookings));
 
-    // Display Receipt
+    // Show receipt
     document.getElementById("rRoom").innerText = booking.roomName;
+    document.getElementById("rRoomNo").innerText = booking.roomNo;
     document.getElementById("rName").innerText = booking.fullName;
     document.getElementById("rPeople").innerText = booking.numPeople;
     document.getElementById("rDate").innerText = booking.dateStay;
@@ -147,7 +148,7 @@
     document.getElementById("receipt").style.display = "block";
   });
 
-  // Download booking as PNG
+  // Download receipt as PNG
   document.getElementById("downloadReceipt").addEventListener("click", function() {
     html2canvas(document.getElementById("receipt")).then(canvas => {
       const link = document.createElement("a");
@@ -159,4 +160,4 @@
 </script>
 
 </body>
-      </html>
+  </html>
