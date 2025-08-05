@@ -3,97 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel | Hall of Mansion</title>
+  <title>Admin Panel - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Fullscreen background */
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-family: 'Arial', sans-serif;
+      background: url('assets/bgindex.jpg') no-repeat center center/cover;
+      color: #fff;
+    }
+
+    /* Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 0;
+    }
+
+    /* Container */
+    .admin-container {
+      position: relative;
+      z-index: 1;
+      width: 95%;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .admin-container h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    table thead {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    table th, table td {
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+      color: #fff;
+    }
+
+    table tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 6px 12px;
+      margin: 2px;
+      font-size: 0.85rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .approve-btn {
+      background: #28a745;
+      color: #fff;
+    }
+    .approve-btn:hover { background: #1e7e34; }
+
+    .reject-btn {
+      background: #dc3545;
+      color: #fff;
+    }
+    .reject-btn:hover { background: #a71d2a; }
+
+    /* Back link */
+    .back-link {
+      display: inline-block;
+      margin: 15px 0;
+      color: #00c3ff;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      table {
+        font-size: 0.75rem;
+      }
+      table th, table td {
+        padding: 6px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .admin-container {
+        padding: 20px 10px;
+      }
+      table {
+        font-size: 0.65rem;
+      }
+      .btn {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+      }
+    }
+  </style>
 </head>
-<body class="fade-in">
+<body>
+  <div class="admin-container">
+    <h2>Admin Panel - Bookings</h2>
+    <a href="index.html" class="back-link">← Back to Home</a>
+    <table id="bookingTable">
+      <thead>
+        <tr>
+          <th>Guest Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Room Type</th>
+          <th>Guests</th>
+          <th>Check-In</th>
+          <th>Check-Out</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Bookings will appear here -->
+      </tbody>
+    </table>
+  </div>
 
-  <!-- Header -->
-  <header>
-    <h1>Admin Panel - Hall of Mansion</h1>
-    <nav>
-      <a href="home.html">Home</a>
-      <a href="booking.html">Bookings</a>
-      <a href="logout.html" class="btn btn-danger">Logout</a>
-    </nav>
-  </header>
+  <script>
+    function loadBookings() {
+      const tableBody = document.querySelector("#bookingTable tbody");
+      tableBody.innerHTML = "";
+      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
-  <main class="container">
-    
-    <!-- Dashboard Section -->
-    <section class="card fade-in">
-      <h2>Manage Bookings</h2>
-      <p>Review and manage all user bookings below.</p>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>User Name</th>
-              <th>Hall Name</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Example booking row -->
-            <tr>
-              <td data-label="Booking ID">001</td>
-              <td data-label="User Name">John Doe</td>
-              <td data-label="Hall Name">Grand Ballroom</td>
-              <td data-label="Date">2025-08-10</td>
-              <td data-label="Time">6:00 PM</td>
-              <td data-label="Status">Pending</td>
-              <td data-label="Actions">
-                <button class="btn btn-success">Approve</button>
-                <button class="btn btn-danger">Reject</button>
-              </td>
-            </tr>
+      if (bookings.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9">No bookings found.</td></tr>`;
+        return;
+      }
 
-            <!-- Example booking row -->
-            <tr>
-              <td data-label="Booking ID">002</td>
-              <td data-label="User Name">Jane Smith</td>
-              <td data-label="Hall Name">Crystal Hall</td>
-              <td data-label="Date">2025-08-12</td>
-              <td data-label="Time">2:00 PM</td>
-              <td data-label="Status">Confirmed</td>
-              <td data-label="Actions">
-                <button class="btn btn-warning">Cancel</button>
-              </td>
-            </tr>
+      bookings.forEach((booking, index) => {
+        const row = document.createElement("tr");
 
-            <!-- If no bookings -->
-            <!-- <tr>
-              <td colspan="7" class="no-data">No bookings available.</td>
-            </tr> -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+        row.innerHTML = `
+          <td>${booking.fullName}</td>
+          <td>${booking.email}</td>
+          <td>${booking.phone}</td>
+          <td>${booking.roomType}</td>
+          <td>${booking.guests}</td>
+          <td>${booking.checkIn}</td>
+          <td>${booking.checkOut}</td>
+          <td>${booking.status}</td>
+          <td>
+            <button class="btn approve-btn" onclick="updateStatus(${index}, 'Approved')">Approve</button>
+            <button class="btn reject-btn" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
 
-    <!-- Admin Actions -->
-    <section class="card fade-in" style="margin-top: 30px;">
-      <h2>Admin Actions</h2>
-      <form>
-        <label for="hallName">Add New Hall</label>
-        <input type="text" id="hallName" placeholder="Enter hall name" required>
-        
-        <label for="capacity">Capacity</label>
-        <input type="number" id="capacity" placeholder="Enter hall capacity" required>
-        
-        <button type="submit" class="btn btn-primary">Add Hall</button>
-      </form>
-    </section>
+    function updateStatus(index, status) {
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      bookings[index].status = status;
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      loadBookings();
+    }
 
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Hall of Mansion. All rights reserved. | <a href="#">Privacy Policy</a></p>
-  </footer>
-
+    loadBookings();
+  </script>
 </body>
 </html>
