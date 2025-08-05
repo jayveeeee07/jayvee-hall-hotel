@@ -1,28 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jayvee Hall of Mansion</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jayvee Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+  <style>
+    /* Fullscreen Background */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('assets/bgindex.jpg') no-repeat center center/cover;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+    }
+
+    /* Dark overlay for better readability */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 0;
+    }
+
+    /* Welcome Container */
+    .welcome-container {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      width: 90%;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .welcome-container h1 {
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+
+    .welcome-container p {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #f1f1f1;
+      margin-bottom: 20px;
+    }
+
+    .welcome-container label {
+      display: block;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    .welcome-container input[type="checkbox"] {
+      transform: scale(1.3);
+      margin-right: 5px;
+    }
+
+    .welcome-container button {
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .welcome-container button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    .welcome-container button:hover:enabled {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Responsive Text */
+    @media (max-width: 600px) {
+      .welcome-container h1 {
+        font-size: 1.8rem;
+      }
+      .welcome-container p {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="welcome-container fade-in">
-  <h1>Welcome to Jayvee Hall of Mansion</h1>
-  <p>
-    Welcome to Jayvee Hall of Mansion, a luxurious yet cozy getaway nestled in the heart of Malungon, Sarangani. 
-    Our hotel offers elegant rooms, breathtaking mountain views, and world-class amenities designed to give you the ultimate relaxation.
-    Whether for family vacations, business trips, or romantic escapes, our warm staff ensures your stay is truly memorable.
-  </p>
-  <label><input type="checkbox" id="terms"> I agree to the Terms and Policy</label><br>
-  <button id="getStarted" disabled>Get Started</button>
-</div>
-<script>
-  const terms = document.getElementById('terms');
-  const btn = document.getElementById('getStarted');
-  terms.addEventListener('change',()=> btn.disabled = !terms.checked);
-  btn.addEventListener('click', ()=> window.location.href='login.html');
-</script>
+  <div class="welcome-container fade-in">
+    <h1>Welcome to Jayvee Hall of Mansion</h1>
+    <p>
+      Experience luxury and comfort at Jayvee Hall of Mansion, nestled in the heart of Malungon, Sarangani. 
+      Enjoy elegant rooms, breathtaking mountain views, and world-class amenities for the ultimate relaxation.
+    </p>
+    <label><input type="checkbox" id="terms"> I agree to the Terms and Policy</label>
+    <button id="getStarted" disabled>Get Started</button>
+  </div>
+
+  <script>
+    const terms = document.getElementById('terms');
+    const btn = document.getElementById('getStarted');
+    terms.addEventListener('change', () => btn.disabled = !terms.checked);
+    btn.addEventListener('click', () => window.location.href = 'login.html');
+  </script>
 </body>
-    </html>
+  </html>
