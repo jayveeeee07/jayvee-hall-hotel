@@ -1,28 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-  </script>
-
   <style>
     body {
       background: url('assets/bgindex.jpg') no-repeat center center/cover;
@@ -60,64 +41,78 @@
   </style>
 </head>
 <body>
+  <div class="dashboard">
+    <h1>Admin Dashboard</h1>
+    <div id="bookingList"></div>
+  </div>
 
-<div class="dashboard">
-  <h1>Admin Dashboard</h1>
-  <div id="bookingList"></div>
-</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-<script>
-  const bookingList = document.getElementById("bookingList");
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdMcz7H8k5QjQikD6ZAlf7kHw7BbUBO70",
+      authDomain: "jayveehallofmansion.firebaseapp.com",
+      databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
+      projectId: "jayveehallofmansion",
+      storageBucket: "jayveehallofmansion.firebasestorage.app",
+      messagingSenderId: "596113378063",
+      appId: "1:596113378063:web:ae6fa08175627727660c7a",
+      measurementId: "G-LY9QYJKZMX"
+    };
 
-  db.ref('bookings').on('value', (snapshot) => {
-    bookingList.innerHTML = "";
-    const data = snapshot.val();
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    for (let key in data) {
-      const booking = data[key];
-      const card = document.createElement("div");
-      card.className = "booking-card";
-      card.innerHTML = `
-        <h3>${booking.room}</h3>
-        <p><strong>Name:</strong> ${booking.name}</p>
-        <p><strong>Email:</strong> ${booking.email}</p>
-        <p><strong>Date:</strong> ${booking.date}</p>
-        <p><strong>Status:</strong> ${booking.status}</p>
-        <button class="approve" onclick="updateStatus('${key}', 'Approved')">Approve</button>
-        <button class="reject" onclick="updateStatus('${key}', 'Rejected')">Reject</button>
-        <button class="receipt" onclick="downloadReceipt('${booking.name}','${booking.room}','${booking.date}','${booking.status}')">Download Receipt</button>
-      `;
-      bookingList.appendChild(card);
+    const bookingList = document.getElementById("bookingList");
+
+    const bookingsRef = ref(db, 'bookings');
+    onValue(bookingsRef, (snapshot) => {
+      bookingList.innerHTML = "";
+      const data = snapshot.val();
+      for (let key in data) {
+        const booking = data[key];
+        const card = document.createElement("div");
+        card.className = "booking-card";
+        card.innerHTML = `
+          <h3>${booking.room}</h3>
+          <p><strong>Name:</strong> ${booking.name}</p>
+          <p><strong>Email:</strong> ${booking.email}</p>
+          <p><strong>Date:</strong> ${booking.date}</p>
+          <p><strong>Status:</strong> ${booking.status}</p>
+          <button class="approve" onclick="updateStatus('${key}', 'Approved')">Approve</button>
+          <button class="reject" onclick="updateStatus('${key}', 'Rejected')">Reject</button>
+          <button class="receipt" onclick="downloadReceipt('${booking.name}','${booking.room}','${booking.date}','${booking.status}')">Download Receipt</button>
+        `;
+        bookingList.appendChild(card);
+      }
+    });
+
+    window.updateStatus = function(id, status) {
+      update(ref(db, 'bookings/' + id), { status });
     }
-  });
 
-  function updateStatus(id, status) {
-    db.ref('bookings/' + id).update({ status: status });
-  }
-
-  // Generate and Download Receipt
-  function downloadReceipt(name, room, date, status) {
-    const receiptWindow = window.open('', '_blank');
-    receiptWindow.document.write(`
-      <html>
-        <head><title>Booking Receipt</title></head>
-        <body style="text-align:center; font-family: Arial; background:url('assets/bgindex.jpg') no-repeat center center/cover; height:100vh; display:flex; align-items:center; justify-content:center;">
-          <div style="background: rgba(255,255,255,0.9); padding:20px; border-radius:15px;">
-            <h1>Jayvee Hall of Mansion</h1>
-            <h2>Booking Receipt</h2>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Room:</strong> ${room}</p>
-            <p><strong>Date:</strong> ${date}</p>
-            <p><strong>Status:</strong> ${status}</p>
-            <p>Thank you for booking with us!</p>
-          </div>
-        </body>
-      </html>
-    `);
-    receiptWindow.document.close();
-    receiptWindow.print();
-  }
-</script>
-
+    window.downloadReceipt = function(name, room, date, status) {
+      const receiptWindow = window.open('', '_blank');
+      receiptWindow.document.write(`
+        <html>
+          <head><title>Booking Receipt</title></head>
+          <body style="text-align:center; font-family: Arial; background:url('assets/bgindex.jpg') no-repeat center center/cover; height:100vh; display:flex; align-items:center; justify-content:center;">
+            <div style="background: rgba(255,255,255,0.9); padding:20px; border-radius:15px;">
+              <h1>Jayvee Hall of Mansion</h1>
+              <h2>Booking Receipt</h2>
+              <p><strong>Name:</strong> ${name}</p>
+              <p><strong>Room:</strong> ${room}</p>
+              <p><strong>Date:</strong> ${date}</p>
+              <p><strong>Status:</strong> ${status}</p>
+              <p>Thank you for booking with us!</p>
+            </div>
+          </body>
+        </html>
+      `);
+      receiptWindow.document.close();
+      receiptWindow.print();
+    }
+  </script>
 </body>
 </html>
