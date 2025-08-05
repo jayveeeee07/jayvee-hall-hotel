@@ -15,7 +15,7 @@
       padding: 20px;
     }
     .admin-container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       background: #fff;
       padding: 20px;
@@ -49,15 +49,16 @@
       text-align: right;
       margin-bottom: 15px;
     }
-    .export-btn {
+    .export-btn, .clear-btn {
       background: #28a745;
       color: white;
       border: none;
       padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
+      margin-left: 5px;
     }
-    .export-btn:hover {
+    .export-btn:hover, .clear-btn:hover {
       background: #218838;
     }
     .delete-btn {
@@ -82,6 +83,11 @@
     }
     button.logout:hover {
       background: #0056b3;
+    }
+    .no-data {
+      text-align: center;
+      padding: 20px;
+      color: #777;
     }
     @keyframes fadeIn {
       from {opacity: 0;}
@@ -122,15 +128,21 @@
     <h3>All Reservations / Online Bookings</h3>
     <div class="actions-bar">
       <button class="export-btn" onclick="exportToPDF()">Export to PDF</button>
+      <button class="export-btn" onclick="exportCSV()">Export to CSV</button>
+      <button class="clear-btn" onclick="clearData()">Clear All Data</button>
     </div>
     <table>
       <thead>
         <tr>
+          <th>#</th>
+          <th>Room</th>
           <th>Name</th>
-          <th>People</th>
+          <th>Guests</th>
           <th>Date of Stay</th>
           <th>Days</th>
           <th>Payment Method</th>
+          <th>Bank</th>
+          <th>Timestamp</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -175,17 +187,21 @@
     function renderBookings() {
       bookingsTable.innerHTML = "";
       if (bookings.length === 0) {
-        bookingsTable.innerHTML = `<tr><td colspan="6">No bookings found.</td></tr>`;
+        bookingsTable.innerHTML = `<tr><td colspan="10" class="no-data">No bookings yet.</td></tr>`;
         return;
       }
       bookings.forEach((b, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${b.name}</td>
-          <td>${b.people}</td>
-          <td>${b.date}</td>
-          <td>${b.days}</td>
-          <td>${b.payment}</td>
+          <td>${index + 1}</td>
+          <td>${b.roomName || "-"}</td>
+          <td>${b.fullName || b.name}</td>
+          <td>${b.numPeople || b.people}</td>
+          <td>${b.dateStay || b.date}</td>
+          <td>${b.numDays || b.days}</td>
+          <td>${b.paymentMethod || b.payment}</td>
+          <td>${b.bank || "-"}</td>
+          <td>${b.timestamp || "-"}</td>
           <td><button class="delete-btn" onclick="deleteBooking(${index})">Delete</button></td>
         `;
         bookingsTable.appendChild(row);
@@ -226,7 +242,7 @@
       } else {
         let y = 40;
         bookings.forEach((b, index) => {
-          const info = `${index + 1}. ${b.name} | People: ${b.people} | Date: ${b.date} | Days: ${b.days} | Payment: ${b.payment}`;
+          const info = `${index + 1}. ${b.fullName || b.name} | People: ${b.numPeople || b.people} | Date: ${b.dateStay || b.date} | Days: ${b.numDays || b.days} | Payment: ${b.paymentMethod || b.payment}`;
           doc.text(info, 14, y);
           y += 10;
           if (y > 180) {
@@ -236,6 +252,34 @@
         });
       }
       doc.save("Booking_Records.pdf");
+    }
+
+    // Export data as CSV
+    function exportCSV() {
+      if (bookings.length === 0) {
+        alert("No data to export.");
+        return;
+      }
+      let csv = "No,Room,Name,Guests,Date of Stay,Days,Payment,Bank,Timestamp\n";
+      bookings.forEach((b, i) => {
+        csv += `${i+1},${b.roomName || "-"},${b.fullName || b.name},${b.numPeople || b.people},${b.dateStay || b.date},${b.numDays || b.days},${b.paymentMethod || b.payment},${b.bank || "-"},${b.timestamp || "-"}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "Bookings.csv";
+      link.click();
+    }
+
+    // Clear all bookings
+    function clearData() {
+      if (confirm("Are you sure you want to delete all bookings?")) {
+        localStorage.removeItem("bookings");
+        bookings = [];
+        renderBookings();
+        updateNotifications();
+      }
     }
 
     // Notifications
@@ -251,4 +295,4 @@
     updateNotifications();
   </script>
 </body>
-  </html>
+            </html>
