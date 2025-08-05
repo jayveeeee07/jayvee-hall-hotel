@@ -3,50 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Jayvee Hall</title>
+  <title>Admin Panel - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    .admin-container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
   <script defer>
     document.addEventListener("DOMContentLoaded", () => {
+      // Retrieve data from localStorage
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
+      // Populate Users Table
       const usersTable = document.getElementById("usersTable");
-      users.forEach(u => {
-        let row = `<tr><td>${u.username}</td><td>${u.email}</td><td>${u.age}</td><td>${u.contact}</td></tr>`;
-        usersTable.innerHTML += row;
-      });
+      if (users.length === 0) {
+        usersTable.innerHTML = `<tr><td colspan="5">No registered users yet.</td></tr>`;
+      } else {
+        users.forEach(u => {
+          let row = `<tr>
+            <td>${u.username}</td>
+            <td>${u.email}</td>
+            <td>${u.age}</td>
+            <td>${u.contact}</td>
+            <td>${u.address}</td>
+          </tr>`;
+          usersTable.innerHTML += row;
+        });
+      }
 
+      // Populate Bookings Table
       const bookingsTable = document.getElementById("bookingsTable");
-      bookings.forEach(b => {
-        let row = `<tr><td>${b.name}</td><td>${b.people}</td><td>${b.date}</td><td>${b.days}</td><td>${b.payment}</td></tr>`;
-        bookingsTable.innerHTML += row;
-      });
+      if (bookings.length === 0) {
+        bookingsTable.innerHTML = `<tr><td colspan="5">No bookings found.</td></tr>`;
+      } else {
+        bookings.forEach(b => {
+          let row = `<tr>
+            <td>${b.name}</td>
+            <td>${b.people}</td>
+            <td>${b.date}</td>
+            <td>${b.days}</td>
+            <td>${b.payment}</td>
+          </tr>`;
+          bookingsTable.innerHTML += row;
+        });
+      }
+
+      // Notifications
+      document.getElementById("notifCount").innerText = bookings.length;
+      document.getElementById("userCount").innerText = users.length;
+      if(users.length > 0) {
+        document.getElementById("lastUser").innerText = users[users.length-1].username;
+      }
     });
   </script>
 </head>
 <body>
-  <div class="form-container fade-in">
-    <h2>Admin Panel</h2>
-    
+  <div class="admin-container">
+    <h2>Admin Panel - Jayvee Hall of Mansion</h2>
+
     <h3>Registered Users</h3>
-    <table border="1" width="100%">
-      <tr><th>Username</th><th>Email</th><th>Age</th><th>Contact</th></tr>
+    <table>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Age</th>
+        <th>Contact</th>
+        <th>Address</th>
+      </tr>
       <tbody id="usersTable"></tbody>
     </table>
 
-    <h3>Bookings</h3>
-    <table border="1" width="100%">
-      <tr><th>Name</th><th>People</th><th>Date</th><th>Days</th><th>Payment</th></tr>
+    <h3>All Reservations / Online Bookings</h3>
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Number of People</th>
+        <th>Date of Stay</th>
+        <th>Days</th>
+        <th>Payment Method</th>
+      </tr>
       <tbody id="bookingsTable"></tbody>
     </table>
 
     <h3>Notifications</h3>
     <ul>
-      <li>System started successfully.</li>
-      <li>Last user signup: <span id="lastUser">Check table above</span></li>
+      <li>Total Registered Users: <span id="userCount">0</span></li>
+      <li>Total Bookings: <span id="notifCount">0</span></li>
+      <li>Last Registered User: <span id="lastUser">None</span></li>
     </ul>
 
-    <button onclick="window.location.href='login.html'">Logout</button>
+    <div style="text-align:center;">
+      <button onclick="window.location.href='login.html'">Logout</button>
+    </div>
   </div>
 </body>
   </html>
