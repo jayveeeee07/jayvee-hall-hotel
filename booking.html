@@ -1,172 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Room Booking - Jayvee Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    /* Fullscreen Background */
     body {
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      font-family: Arial, sans-serif;
+      background: url('assets/bgindex.jpg') no-repeat center center fixed;
+      background-size: cover;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: url('assets/bgindex.jpg') no-repeat center center/cover;
-      font-family: 'Arial', sans-serif;
+      align-items: center;
+      min-height: 100vh;
       color: #fff;
     }
 
-    /* Dark Overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.55);
-      z-index: 0;
-    }
-
-    /* Glass Booking Form */
     .booking-container {
-      position: relative;
-      z-index: 1;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 25px 30px;
+      border-radius: 12px;
+      max-width: 450px;
       width: 90%;
-      max-width: 500px;
-      padding: 35px 30px;
-      border-radius: 15px;
       text-align: center;
-      background: rgba(255, 255, 255, 0.12);
-      backdrop-filter: blur(10px);
-      animation: fadeIn 1.3s ease-in-out;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
 
     .booking-container h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #fff;
+      margin-bottom: 15px;
     }
 
-    .booking-container input, .booking-container select {
+    .booking-container input, 
+    .booking-container select {
       width: 100%;
-      padding: 12px 15px;
-      margin: 8px 0;
-      border: none;
+      padding: 12px;
+      margin: 10px 0;
       border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-      background: rgba(255,255,255,0.85);
-      color: #333;
+      border: none;
+      font-size: 16px;
     }
 
     .booking-container button {
       width: 100%;
-      padding: 12px 0;
-      margin-top: 15px;
-      font-size: 1rem;
-      font-weight: bold;
+      padding: 12px;
+      margin-top: 10px;
       border: none;
       border-radius: 8px;
-      background: #007bff;
+      background: #28a745;
       color: #fff;
+      font-size: 16px;
       cursor: pointer;
-      transition: 0.3s;
+      font-weight: bold;
     }
 
     .booking-container button:hover {
-      background: #0056b3;
-      transform: scale(1.05);
+      background: #218838;
     }
 
-    .booking-container p {
+    .back-btn {
+      background: #ff9800 !important;
+      margin-top: 10px;
+    }
+
+    .back-btn:hover {
+      background: #e68900 !important;
+    }
+
+    #successMsg {
+      display: none;
       margin-top: 15px;
-      font-size: 0.9rem;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      background: rgba(40,167,69,0.9);
+      color: #fff;
     }
 
-    .booking-container a {
-      color: #00c3ff;
-      text-decoration: none;
+    .details-box {
+      display: none;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: left;
     }
 
-    .booking-container a:hover {
-      text-decoration: underline;
+    .details-box h3 {
+      margin-top: 0;
+      color: #ffeb3b;
     }
 
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(30px);}
-      to {opacity: 1; transform: translateY(0);}
+    .details-box p {
+      margin: 5px 0;
+      font-size: 15px;
+      color: #fff;
     }
 
-    /* Mobile Responsive */
-    @media (max-width: 480px) {
+    .download-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #2196f3;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .download-btn:hover {
+      background: #0b7dda;
+    }
+
+    @media (max-width: 500px) {
       .booking-container {
-        padding: 30px 20px;
-      }
-      .booking-container h2 {
-        font-size: 1.6rem;
+        padding: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="booking-container">
-    <h2>Book a Room</h2>
-    <input type="text" id="fullName" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email Address" required>
-    <input type="tel" id="phone" placeholder="Phone Number" required>
-    <select id="roomType" required>
-      <option value="">Select Room Type</option>
-      <option value="Deluxe Room">Deluxe Room</option>
-      <option value="Suite Room">Suite Room</option>
-      <option value="Family Room">Family Room</option>
-      <option value="Presidential Room">Presidential Room</option>
-    </select>
-    <input type="number" id="guests" placeholder="Number of Guests" min="1" required>
-    <label style="display:block; text-align:left; margin-top:10px;">Check-in Date</label>
-    <input type="date" id="checkIn" required>
-    <label style="display:block; text-align:left; margin-top:10px;">Check-out Date</label>
-    <input type="date" id="checkOut" required>
-    <button onclick="bookRoom()">Confirm Booking</button>
-    <p><a href="index.html">Back to Home</a></p>
+
+<div class="booking-container fade-in">
+  <h2>Book Your Stay</h2>
+
+  <input type="text" id="fullName" placeholder="Full Name" required>
+  <input type="date" id="bookingDate" required>
+
+  <select id="roomSelect" required>
+    <option value="">Select Room</option>
+    <option value="Room 101 - Deluxe Room">Room 101 - Deluxe Room</option>
+    <option value="Room 102 - Executive Suite">Room 102 - Executive Suite</option>
+    <option value="Room 103 - Family Room">Room 103 - Family Room</option>
+    <option value="Room 104 - Presidential Suite">Room 104 - Presidential Suite</option>
+  </select>
+
+  <button onclick="submitBooking()">Confirm Booking</button>
+  <button class="back-btn" onclick="window.location.href='home.html'">Back to Home</button>
+
+  <div id="successMsg">Your booking request has been submitted!</div>
+
+  <!-- Booking Details Box -->
+  <div class="details-box" id="detailsBox">
+    <h3>Booking Details</h3>
+    <p><strong>Name:</strong> <span id="detailName"></span></p>
+    <p><strong>Room:</strong> <span id="detailRoom"></span></p>
+    <p><strong>Date:</strong> <span id="detailDate"></span></p>
+    <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+    <button class="download-btn" onclick="downloadReceipt()">Download Receipt</button>
   </div>
+</div>
 
-  <script>
-    function bookRoom() {
-      const fullName = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const roomType = document.getElementById('roomType').value;
-      const guests = document.getElementById('guests').value;
-      const checkIn = document.getElementById('checkIn').value;
-      const checkOut = document.getElementById('checkOut').value;
+<script>
+  const { jsPDF } = window.jspdf;
 
-      if (!fullName || !email || !phone || !roomType || !guests || !checkIn || !checkOut) {
-        alert("Please complete all fields.");
-        return;
-      }
+  // Pre-fill room from query string if passed
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedRoom = urlParams.get('room');
+  if (selectedRoom) {
+    document.getElementById('roomSelect').value = selectedRoom;
+  }
 
-      // Simple date validation
-      if (new Date(checkOut) <= new Date(checkIn)) {
-        alert("Check-out date must be after check-in date.");
-        return;
-      }
+  let lastBooking = null;
 
-      // Retrieve existing bookings
-      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+  function submitBooking() {
+    const name = document.getElementById('fullName').value.trim();
+    const date = document.getElementById('bookingDate').value;
+    const room = document.getElementById('roomSelect').value;
 
-      // Save new booking
-      bookings.push({
-        fullName, email, phone, roomType, guests,
-        checkIn, checkOut,
-        status: "Pending",
-        bookedAt: new Date().toLocaleString()
-      });
-
-      localStorage.setItem("bookings", JSON.stringify(bookings));
-      alert("Booking successful! We will contact you for confirmation.");
-      window.location.href = "index.html";
+    if (!name || !date || !room) {
+      alert("Please fill in all booking details.");
+      return;
     }
-  </script>
+
+    const booking = {
+      name: name,
+      date: date,
+      room: room,
+      status: "Pending"
+    };
+
+    // Save to localStorage
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+
+    lastBooking = booking;
+
+    // Show success message
+    document.getElementById("successMsg").style.display = "block";
+
+    // Show details box
+    document.getElementById("detailsBox").style.display = "block";
+    document.getElementById("detailName").innerText = booking.name;
+    document.getElementById("detailRoom").innerText = booking.room;
+    document.getElementById("detailDate").innerText = booking.date;
+    document.getElementById("detailStatus").innerText = booking.status;
+
+    // Reset form
+    document.getElementById('fullName').value = '';
+    document.getElementById('bookingDate').value = '';
+    document.getElementById('roomSelect').value = '';
+  }
+
+  function downloadReceipt() {
+    if (!lastBooking) return;
+
+    const doc = new jsPDF("p", "pt", "a4");
+
+    // Add background image
+    const img = new Image();
+    img.src = 'assets/receiptbg.jpg'; // Replace with your background image path
+    img.onload = function() {
+      doc.addImage(img, 'JPEG', 0, 0, 595, 842); // Full A4 background
+
+      // Overlay booking text
+      doc.setFontSize(22);
+      doc.setTextColor(0, 0, 0);
+      doc.text("Jayvee Hall of Mansion", 180, 120);
+      doc.setFontSize(14);
+      doc.text(`Name: ${lastBooking.name}`, 100, 200);
+      doc.text(`Room: ${lastBooking.room}`, 100, 230);
+      doc.text(`Date: ${lastBooking.date}`, 100, 260);
+      doc.text(`Status: ${lastBooking.status}`, 100, 290);
+      doc.text("Thank you for booking with us!", 100, 350);
+
+      doc.save("Booking_Receipt.pdf");
+    };
+  }
+</script>
+
 </body>
-      </html>
+                                                          </html>
