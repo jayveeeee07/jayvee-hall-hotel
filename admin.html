@@ -4,209 +4,256 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('assets/bgindex.jpg') no-repeat center center fixed;
+      background: url('assets/admin-bg.jpg') no-repeat center center fixed;
       background-size: cover;
+      margin: 0;
+      color: #fff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      color: #fff;
+      align-items: center;
+      padding: 20px;
     }
 
-    header {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
+    h2 {
       text-align: center;
-      font-size: 24px;
-    }
-
-    .admin-container {
-      flex: 1;
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      margin-top: 20px;
     }
 
     table {
       width: 100%;
-      border-collapse: collapse;
+      max-width: 900px;
       margin-top: 20px;
-      background: rgba(255,255,255,0.9);
-      color: #333;
-      border-radius: 8px;
+      border-collapse: collapse;
+      background: rgba(0,0,0,0.6);
+      border-radius: 10px;
       overflow: hidden;
     }
 
     th, td {
-      padding: 12px 15px;
+      padding: 12px;
       text-align: center;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
 
     th {
-      background: #333;
-      color: #fff;
+      background: rgba(0,0,0,0.8);
     }
 
     tr:hover {
-      background: rgba(0,0,0,0.05);
+      background: rgba(255,255,255,0.1);
     }
 
-    .btn-approve, .btn-reject {
-      border: none;
-      padding: 8px 14px;
-      margin: 3px;
-      cursor: pointer;
-      border-radius: 6px;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .btn-approve {
-      background: #28a745;
-    }
-    .btn-reject {
-      background: #dc3545;
-    }
-    .btn-approve:hover { background: #218838; }
-    .btn-reject:hover { background: #c82333; }
-
-    .logout-btn {
-      margin-top: 20px;
-      background: #ff9800;
-      color: #fff;
-      padding: 10px 20px;
+    .btn {
+      padding: 6px 12px;
       border: none;
       border-radius: 6px;
+      color: white;
       cursor: pointer;
-      font-size: 16px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+      font-size: 14px;
     }
 
-    .logout-btn:hover {
-      background: #e68900;
-    }
+    .approve { background: #28a745; }
+    .approve:hover { background: #218838; }
 
-    /* Notification popup */
-    #notification {
-      display: none;
+    .reject { background: #dc3545; }
+    .reject:hover { background: #b52a38; }
+
+    .view { background: #2196f3; }
+    .view:hover { background: #0b7dda; }
+
+    /* Notification Panel */
+    .notifications {
       position: fixed;
       top: 20px;
       right: 20px;
-      padding: 15px 25px;
       background: rgba(0,0,0,0.8);
-      color: #fff;
-      font-weight: bold;
-      border-radius: 8px;
-      z-index: 1000;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 250px;
+      display: none;
     }
 
-    @media (max-width: 768px) {
-      table {
-        font-size: 14px;
-      }
-      th, td {
-        padding: 10px;
-      }
-      header {
-        font-size: 20px;
-      }
+    .notifications h4 {
+      margin: 0 0 10px;
+      color: #ffeb3b;
     }
+
+    .notification-item {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
+      width: 400px;
+      color: #fff;
+      position: relative;
+      text-align: center;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 22px;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .download-btn {
+      background: #ff9800;
+      margin-top: 10px;
+      width: 100%;
+    }
+
   </style>
 </head>
 <body>
 
-<header>
-  Admin Dashboard - Jayvee Hall of Mansion
-</header>
+  <h2>Admin Panel - Booking Management</h2>
 
-<div class="admin-container">
-  <h2>Booking Management</h2>
-  <p>Approve or reject room bookings from users below:</p>
-
-  <table>
+  <table id="bookingTable">
     <thead>
       <tr>
         <th>Name</th>
         <th>Room</th>
         <th>Date</th>
         <th>Status</th>
-        <th>Action</th>
+        <th>Actions</th>
       </tr>
     </thead>
-    <tbody id="bookingTable">
-      <!-- Populated dynamically -->
-    </tbody>
+    <tbody></tbody>
   </table>
 
-  <button class="logout-btn" onclick="logout()">Logout</button>
-</div>
+  <!-- Notifications -->
+  <div class="notifications" id="notificationPanel">
+    <h4>Notifications</h4>
+    <div id="notificationList"></div>
+  </div>
 
-<div id="notification"></div>
+  <!-- Booking Details Modal -->
+  <div id="detailsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Booking Details</h3>
+      <p><strong>Name:</strong> <span id="modalName"></span></p>
+      <p><strong>Room:</strong> <span id="modalRoom"></span></p>
+      <p><strong>Date:</strong> <span id="modalDate"></span></p>
+      <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+      <button class="btn download-btn" onclick="downloadReceipt()">Download Receipt</button>
+    </div>
+  </div>
 
 <script>
-  // Load bookings from localStorage
-  function loadBookings() {
-    const table = document.getElementById("bookingTable");
-    table.innerHTML = "";
+  const { jsPDF } = window.jspdf;
+  let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+  let selectedBooking = null;
 
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-
-    if (bookings.length === 0) {
-      table.innerHTML = `<tr><td colspan="5">No bookings yet.</td></tr>`;
-      return;
-    }
+  function renderTable() {
+    const tbody = document.querySelector("#bookingTable tbody");
+    tbody.innerHTML = "";
 
     bookings.forEach((booking, index) => {
       const row = document.createElement("tr");
+
       row.innerHTML = `
-        <td>${booking.name}</td>
-        <td>${booking.room}</td>
-        <td>${booking.date}</td>
-        <td>${booking.status}</td>
+        <td>${booking.name || "Unknown"}</td>
+        <td>${booking.room || "N/A"}</td>
+        <td>${booking.date || "N/A"}</td>
+        <td>${booking.status || "Pending"}</td>
         <td>
-          <button class="btn-approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
-          <button class="btn-reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+          <button class="btn approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
+          <button class="btn reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+          <button class="btn view" onclick="viewDetails(${index})">View</button>
         </td>
       `;
-      table.appendChild(row);
+      tbody.appendChild(row);
     });
   }
 
-  // Update booking status
   function updateStatus(index, status) {
-    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
     bookings[index].status = status;
     localStorage.setItem("bookings", JSON.stringify(bookings));
-    showNotification(`Booking ${status}!`, status === "Approved");
-    loadBookings();
+    renderTable();
+    showNotification(`${bookings[index].name}'s booking has been ${status.toLowerCase()}`);
   }
 
-  function logout() {
-    window.location.href = "login.html";
+  function showNotification(message) {
+    const panel = document.getElementById("notificationPanel");
+    const list = document.getElementById("notificationList");
+
+    const item = document.createElement("div");
+    item.classList.add("notification-item");
+    item.textContent = message;
+    list.prepend(item);
+
+    panel.style.display = "block";
+
+    setTimeout(() => {
+      if (item.parentNode) item.remove();
+      if (!list.children.length) panel.style.display = "none";
+    }, 4000);
   }
 
-  // Show temporary notification
-  function showNotification(message, isSuccess) {
-    const notif = document.getElementById("notification");
-    notif.textContent = message;
-    notif.style.display = "block";
-    notif.style.background = isSuccess ? "rgba(40,167,69,0.9)" : "rgba(220,53,69,0.9)";
-    setTimeout(() => notif.style.display = "none", 4000);
+  function viewDetails(index) {
+    selectedBooking = bookings[index];
+    document.getElementById("modalName").innerText = selectedBooking.name;
+    document.getElementById("modalRoom").innerText = selectedBooking.room;
+    document.getElementById("modalDate").innerText = selectedBooking.date;
+    document.getElementById("modalStatus").innerText = selectedBooking.status;
+    document.getElementById("detailsModal").style.display = "flex";
   }
 
-  // Load bookings on page start
-  window.onload = loadBookings;
+  function closeModal() {
+    document.getElementById("detailsModal").style.display = "none";
+  }
+
+  function downloadReceipt() {
+    if (!selectedBooking) return;
+
+    const doc = new jsPDF("p", "pt", "a4");
+
+    const img = new Image();
+    img.src = 'assets/receipt-bg.jpg'; // Add a background image for the receipt
+    img.onload = function() {
+      doc.addImage(img, 'JPEG', 0, 0, 595, 842);
+
+      doc.setFontSize(22);
+      doc.setTextColor(0,0,0);
+      doc.text("Jayvee Hall of Mansion - Booking Receipt", 60, 120);
+      doc.setFontSize(14);
+      doc.text(`Name: ${selectedBooking.name}`, 100, 200);
+      doc.text(`Room: ${selectedBooking.room}`, 100, 230);
+      doc.text(`Date: ${selectedBooking.date}`, 100, 260);
+      doc.text(`Status: ${selectedBooking.status}`, 100, 290);
+      doc.text("Thank you for choosing us!", 100, 350);
+
+      doc.save("Booking_Receipt.pdf");
+    };
+  }
+
+  // Initialize
+  renderTable();
 </script>
 
 </body>
