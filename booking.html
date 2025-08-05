@@ -1,42 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "jayveehallofmansion.firebaseapp.com",
-      databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
-      projectId: "jayveehallofmansion",
-      storageBucket: "jayveehallofmansion.appspot.com",
-      messagingSenderId: "59611337806",
-      appId: "YOUR_APP_ID"
-    };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-  </script>
-
   <style>
     body {
       background: url('assets/bgindex.jpg') no-repeat center center/cover;
-      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
     }
     .booking-container {
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       padding: 30px;
       border-radius: 15px;
-      max-width: 400px;
       width: 90%;
+      max-width: 400px;
       text-align: center;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
@@ -57,46 +40,63 @@
   </style>
 </head>
 <body>
+  <div class="booking-container">
+    <h2>Book Your Room</h2>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="date" id="date" required>
+    <select id="roomSelect">
+      <option value="Room 101 - Deluxe Room">Room 101 - Deluxe Room</option>
+      <option value="Room 102 - Executive Suite">Room 102 - Executive Suite</option>
+      <option value="Room 103 - Family Room">Room 103 - Family Room</option>
+      <option value="Room 104 - Presidential Suite">Room 104 - Presidential Suite</option>
+    </select>
+    <button onclick="submitBooking()">Submit Booking</button>
+  </div>
 
-<div class="booking-container">
-  <h2>Book Your Room</h2>
-  <input type="text" id="name" placeholder="Full Name" required>
-  <input type="email" id="email" placeholder="Email" required>
-  <input type="date" id="date" required>
-  <select id="roomSelect">
-    <option value="Room 101 - Deluxe Room">Room 101 - Deluxe Room</option>
-    <option value="Room 102 - Executive Suite">Room 102 - Executive Suite</option>
-    <option value="Room 103 - Family Room">Room 103 - Family Room</option>
-    <option value="Room 104 - Presidential Suite">Room 104 - Presidential Suite</option>
-  </select>
-  <button onclick="submitBooking()">Submit Booking</button>
-</div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-<script>
-  function submitBooking() {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const date = document.getElementById("date").value;
-    const room = document.getElementById("roomSelect").value;
+    const firebaseConfig = {
+      apiKey: "AIzaSyCdMcz7H8k5QjQikD6ZAlf7kHw7BbUBO70",
+      authDomain: "jayveehallofmansion.firebaseapp.com",
+      databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
+      projectId: "jayveehallofmansion",
+      storageBucket: "jayveehallofmansion.firebasestorage.app",
+      messagingSenderId: "596113378063",
+      appId: "1:596113378063:web:ae6fa08175627727660c7a",
+      measurementId: "G-LY9QYJKZMX"
+    };
 
-    if (!name || !email || !date) {
-      alert("Please fill out all fields.");
-      return;
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.submitBooking = function() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const date = document.getElementById("date").value;
+      const room = document.getElementById("roomSelect").value;
+
+      if (!name || !email || !date) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      const bookingsRef = ref(db, 'bookings');
+      const newBookingRef = push(bookingsRef);
+
+      set(newBookingRef, {
+        name,
+        email,
+        date,
+        room,
+        status: "Pending"
+      }).then(() => {
+        alert("Booking submitted successfully!");
+        window.location.href = "home.html";
+      });
     }
-
-    const newBookingKey = db.ref().child('bookings').push().key;
-    db.ref('bookings/' + newBookingKey).set({
-      name: name,
-      email: email,
-      room: room,
-      date: date,
-      status: "Pending"
-    }).then(() => {
-      alert("Booking submitted successfully!");
-      window.location.href = "home.html";
-    });
-  }
-</script>
-
+  </script>
 </body>
-</html>
+  </html>
