@@ -83,6 +83,9 @@
         return;
       }
 
+      // Save email to localStorage for cross-device sync
+      localStorage.setItem("userEmail", email);
+
       const bookingsRef = ref(db, 'bookings');
       const newBookingRef = push(bookingsRef);
 
@@ -99,4 +102,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
