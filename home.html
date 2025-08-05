@@ -5,41 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      padding: 20px;
+      background: url('assets/bgindex.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #fff;
     }
-    .home-container {
+
+    header {
+      background: rgba(0,0,0,0.6);
       text-align: center;
-      margin: auto;
-      max-width: 1100px;
+      padding: 20px;
+      font-size: 24px;
     }
+
+    .home-container {
+      flex: 1;
+      max-width: 1200px;
+      margin: 20px auto;
+      background: rgba(0,0,0,0.5);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
     .room-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
       margin-top: 20px;
     }
+
     .room-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      padding: 10px;
-      text-align: center;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
       transition: 0.3s;
     }
+
     .room-card img {
       width: 100%;
       height: 180px;
       object-fit: cover;
-      border-radius: 10px;
     }
+
     .room-card:hover {
       transform: scale(1.02);
     }
+
+    .room-card h3 {
+      margin: 10px 0;
+    }
+
+    .room-card p {
+      margin: 5px 0 10px;
+    }
+
+    .card-buttons {
+      margin-bottom: 15px;
+    }
+
     .card-buttons button {
       margin: 5px;
       padding: 8px 12px;
@@ -50,97 +82,151 @@
       color: white;
       font-size: 14px;
     }
+
     .card-buttons button:hover {
       background: #555;
     }
+
     /* Modal */
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.6);
       justify-content: center;
       align-items: center;
+      z-index: 1000;
     }
+
     .modal-content {
       background: white;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       width: 400px;
       max-width: 90%;
       text-align: center;
+      position: relative;
     }
+
+    .modal-content h3 {
+      color: #333;
+    }
+
+    .modal-content p {
+      color: #555;
+    }
+
     .close {
       position: absolute;
       top: 10px; right: 15px;
       font-size: 22px;
       cursor: pointer;
+      color: #333;
+    }
+
+    /* Notifications */
+    #notifications {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 2000;
+    }
+
+    .notif {
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      min-width: 200px;
+      text-align: center;
+      animation: fadeIn 0.5s;
+    }
+
+    .notif.approved { background: rgba(40,167,69,0.9); }
+    .notif.rejected { background: rgba(220,53,69,0.9); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) {
+      header { font-size: 20px; }
+      .room-card img { height: 150px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HOME CONTENT -->
-  <div class="home-container fade-in">
-    <h2>Welcome to Jayvee Hall of Mansion</h2>
-    <p>Experience luxury and comfort in the heart of Malungon, Sarangani. Explore our elegant rooms and choose the perfect stay for you.</p>
+<header>
+  Welcome to Jayvee Hall of Mansion
+</header>
 
-    <!-- Grid Layout for Rooms -->
-    <div class="room-grid">
-      <div class="room-card">
-        <img src="assets/room1.jpg" alt="Deluxe Room">
-        <h3>Room 101 - Deluxe Room</h3>
-        <p>₱3,500 / night</p>
-        <div class="card-buttons">
-          <button onclick="showRoomDetails(0)">View Details</button>
-          <button onclick="bookRoom('Room 101 - Deluxe Room')">Book Now</button>
-        </div>
+<div class="home-container fade-in">
+  <p>Experience luxury and comfort in the heart of Malungon, Sarangani. Explore our elegant rooms and choose the perfect stay for you.</p>
+
+  <!-- Grid Layout for Rooms -->
+  <div class="room-grid">
+    <div class="room-card">
+      <img src="assets/room1.jpg" alt="Deluxe Room">
+      <h3>Room 101 - Deluxe Room</h3>
+      <p>₱3,500 / night</p>
+      <div class="card-buttons">
+        <button onclick="showRoomDetails(0)">View Details</button>
+        <button onclick="bookRoom('Room 101 - Deluxe Room')">Book Now</button>
       </div>
+    </div>
 
-      <div class="room-card">
-        <img src="assets/room2.jpg" alt="Executive Suite">
-        <h3>Room 102 - Executive Suite</h3>
-        <p>₱5,200 / night</p>
-        <div class="card-buttons">
-          <button onclick="showRoomDetails(1)">View Details</button>
-          <button onclick="bookRoom('Room 102 - Executive Suite')">Book Now</button>
-        </div>
+    <div class="room-card">
+      <img src="assets/room2.jpg" alt="Executive Suite">
+      <h3>Room 102 - Executive Suite</h3>
+      <p>₱5,200 / night</p>
+      <div class="card-buttons">
+        <button onclick="showRoomDetails(1)">View Details</button>
+        <button onclick="bookRoom('Room 102 - Executive Suite')">Book Now</button>
       </div>
+    </div>
 
-      <div class="room-card">
-        <img src="assets/room3.jpg" alt="Family Room">
-        <h3>Room 103 - Family Room</h3>
-        <p>₱4,000 / night</p>
-        <div class="card-buttons">
-          <button onclick="showRoomDetails(2)">View Details</button>
-          <button onclick="bookRoom('Room 103 - Family Room')">Book Now</button>
-        </div>
+    <div class="room-card">
+      <img src="assets/room3.jpg" alt="Family Room">
+      <h3>Room 103 - Family Room</h3>
+      <p>₱4,000 / night</p>
+      <div class="card-buttons">
+        <button onclick="showRoomDetails(2)">View Details</button>
+        <button onclick="bookRoom('Room 103 - Family Room')">Book Now</button>
       </div>
+    </div>
 
-      <div class="room-card">
-        <img src="assets/room4.jpg" alt="Presidential Suite">
-        <h3>Room 104 - Presidential Suite</h3>
-        <p>₱8,000 / night</p>
-        <div class="card-buttons">
-          <button onclick="showRoomDetails(3)">View Details</button>
-          <button onclick="bookRoom('Room 104 - Presidential Suite')">Book Now</button>
-        </div>
+    <div class="room-card">
+      <img src="assets/room4.jpg" alt="Presidential Suite">
+      <h3>Room 104 - Presidential Suite</h3>
+      <p>₱8,000 / night</p>
+      <div class="card-buttons">
+        <button onclick="showRoomDetails(3)">View Details</button>
+        <button onclick="bookRoom('Room 104 - Presidential Suite')">Book Now</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Modal for Room Details -->
-  <div id="roomModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeRoomModal()">&times;</span>
-      <h3 id="roomTitle"></h3>
-      <p id="roomDesc"></p>
-      <p id="roomPrice"></p>
-      <button onclick="proceedToBooking()">Interested</button>
-      <button onclick="closeRoomModal()">Not Interested</button>
-    </div>
+<!-- Modal for Room Details -->
+<div id="roomModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeRoomModal()">&times;</span>
+    <h3 id="roomTitle"></h3>
+    <p id="roomDesc"></p>
+    <p id="roomPrice"></p>
+    <button onclick="proceedToBooking()">Interested</button>
+    <button onclick="closeRoomModal()">Not Interested</button>
   </div>
+</div>
+
+<!-- Notifications -->
+<div id="notifications"></div>
 
 <script>
   const roomDetails = [
@@ -171,7 +257,28 @@
   function bookRoom(roomName) {
     window.location.href = `booking.html?room=${encodeURIComponent(roomName)}`;
   }
+
+  // Load notifications from localStorage
+  function loadNotifications() {
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const notifContainer = document.getElementById("notifications");
+    notifContainer.innerHTML = "";
+
+    bookings.forEach(b => {
+      if (b.status === "Approved" || b.status === "Rejected") {
+        const div = document.createElement("div");
+        div.className = `notif ${b.status === "Approved" ? "approved" : "rejected"}`;
+        div.innerText = `Your booking for ${b.room} was ${b.status}`;
+        notifContainer.appendChild(div);
+      }
+    });
+
+    // Hide after 5 seconds
+    setTimeout(() => notifContainer.innerHTML = "", 5000);
+  }
+
+  window.onload = loadNotifications;
 </script>
 
 </body>
-    </html>
+</html>
