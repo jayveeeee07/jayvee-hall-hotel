@@ -4,19 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
     body {
       background: #f0f2f5;
       font-family: Arial, sans-serif;
+      padding: 20px;
     }
     .admin-container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
       animation: fadeIn 1s ease-in-out;
     }
     h2, h3 {
@@ -26,144 +30,20 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      margin: 15px 0;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      padding: 12px;
       text-align: center;
+      border: 1px solid #ddd;
+      font-size: 14px;
     }
     th {
-      background-color: #f4f4f4;
-    }
-    button {
-      padding: 10px 20px;
       background: #007bff;
-      border: none;
-      color: #fff;
-      border-radius: 5px;
-      cursor: pointer;
+      color: white;
     }
-    button:hover {
-      background: #0056b3;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-  </style>
-  <script defer>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Retrieve data from localStorage
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-
-      // Populate Users Table
-      const usersTable = document.getElementById("usersTable");
-      if (users.length === 0) {
-        usersTable.innerHTML = `<tr><td colspan="5">No registered users yet.</td></tr>`;
-      } else {
-        users.forEach(u => {
-          let row = `<tr>
-            <td>${u.username}</td>
-            <td>${u.email}</td>
-            <td>${u.age}</td>
-            <td>${u.contact}</td>
-            <td>${u.address}</td>
-          </tr>`;
-          usersTable.innerHTML += row;
-        });
-      }
-
-      // Populate Bookings Table
-      const bookingsTable = document.getElementById("bookingsTable");
-      if (bookings.length === 0) {
-        bookingsTable.innerHTML = `<tr><td colspan="5">No bookings found.</td></tr>`;
-      } else {
-        bookings.forEach(b => {
-          let row = `<tr>
-            <td>${b.name}</td>
-            <td>${b.people}</td>
-            <td>${b.date}</td>
-            <td>${b.days}</td>
-            <td>${b.payment}</td>
-          </tr>`;
-          bookingsTable.innerHTML += row;
-        });
-      }
-
-      // Notifications
-      document.getElementById("notifCount").innerText = bookings.length;
-      document.getElementById("userCount").innerText = users.length;
-      if(users.length > 0) {
-        document.getElementById("lastUser").innerText = users[users.length-1].username;
-      }
-    });
-  </script>
-</head>
-<body>
-  <div class="admin-container">
-    <h2>Admin Panel - Jayvee Hall of Mansion</h2>
-
-    <h3>Registered Users</h3>
-    <table>
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Age</th>
-        <th>Contact</th>
-        <th>Address</th>
-      </tr>
-      <tbody id="usersTable"></tbody>
-    </table>
-
-    <h3>All Reservations / Online Bookings</h3>
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Number of People</th>
-        <th>Date of Stay</th>
-        <th>Days</th>
-        <th>Payment Method</th>
-      </tr>
-      <tbody id="bookingsTable"></tbody>
-    </table>
-
-    <h3>Notifications</h3>
-    <ul>
-      <li>Total Registered Users: <span id="userCount">0</span></li>
-      <li>Total Bookings: <span id="notifCount">0</span></li>
-      <li>Last Registered User: <span id="lastUser">None</span></li>
-    </ul>
-
-    <div style="text-align:center;">
-      <button onclick="window.location.href='login.html'">Logout</button>
-    </div>
-  </div>
-</body>
-  </html>
-
-
-  <!-- jsPDF for PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      padding: 20px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .admin-container {
-      max-width: 1000px;
-      margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
     }
     .actions-bar {
       text-align: right;
@@ -180,51 +60,70 @@
     .export-btn:hover {
       background: #218838;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-      font-size: 14px;
-    }
-    th {
-      background: #007bff;
+    .delete-btn {
+      background: #dc3545;
       color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-    .actions button {
-      margin-right: 5px;
-      padding: 5px 10px;
       border: none;
+      padding: 5px 10px;
       border-radius: 4px;
       cursor: pointer;
       font-size: 13px;
     }
-    .delete-btn {
-      background: #dc3545;
-      color: white;
-    }
     .delete-btn:hover {
       background: #b02a37;
+    }
+    button.logout {
+      padding: 10px 20px;
+      background: #007bff;
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.logout:hover {
+      background: #0056b3;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
     }
   </style>
 </head>
 <body>
   <div class="admin-container">
     <h2>Admin Panel - Jayvee Hall of Mansion</h2>
-    <p style="text-align:center;">All booking information from the Online Reservation system is shown below.</p>
+    <p style="text-align:center;">Manage users, bookings, and notifications from here.</p>
 
+    <!-- Notifications -->
+    <h3>Notifications</h3>
+    <ul>
+      <li>Total Registered Users: <span id="userCount">0</span></li>
+      <li>Total Bookings: <span id="notifCount">0</span></li>
+      <li>Last Registered User: <span id="lastUser">None</span></li>
+    </ul>
+
+    <!-- Users Table -->
+    <h3>Registered Users</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Age</th>
+          <th>Contact</th>
+          <th>Address</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTable"></tbody>
+    </table>
+
+    <!-- Bookings Table -->
+    <h3>All Reservations / Online Bookings</h3>
     <div class="actions-bar">
       <button class="export-btn" onclick="exportToPDF()">Export to PDF</button>
     </div>
-
-    <table id="bookingTable">
+    <table>
       <thead>
         <tr>
           <th>Name</th>
@@ -235,21 +134,50 @@
           <th>Actions</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="bookingsTable"></tbody>
     </table>
+
+    <!-- Logout Button -->
+    <div style="text-align:center; margin-top:20px;">
+      <button class="logout" onclick="window.location.href='login.html'">Logout</button>
+    </div>
   </div>
 
   <script>
-    const tableBody = document.querySelector("#bookingTable tbody");
+    const usersTable = document.getElementById("usersTable");
+    const bookingsTable = document.getElementById("bookingsTable");
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
     let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
 
+    // Render Users
+    function renderUsers() {
+      usersTable.innerHTML = "";
+      if (users.length === 0) {
+        usersTable.innerHTML = `<tr><td colspan="6">No registered users yet.</td></tr>`;
+      } else {
+        users.forEach((u, index) => {
+          usersTable.innerHTML += `
+            <tr>
+              <td>${u.username}</td>
+              <td>${u.email}</td>
+              <td>${u.age}</td>
+              <td>${u.contact}</td>
+              <td>${u.address}</td>
+              <td><button class="delete-btn" onclick="deleteUser(${index})">Delete</button></td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    // Render Bookings
     function renderBookings() {
-      tableBody.innerHTML = "";
+      bookingsTable.innerHTML = "";
       if (bookings.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No bookings yet</td></tr>`;
+        bookingsTable.innerHTML = `<tr><td colspan="6">No bookings found.</td></tr>`;
         return;
       }
-
       bookings.forEach((b, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -258,22 +186,33 @@
           <td>${b.date}</td>
           <td>${b.days}</td>
           <td>${b.payment}</td>
-          <td class="actions">
-            <button class="delete-btn" onclick="deleteBooking(${index})">Delete</button>
-          </td>
+          <td><button class="delete-btn" onclick="deleteBooking(${index})">Delete</button></td>
         `;
-        tableBody.appendChild(row);
+        bookingsTable.appendChild(row);
       });
     }
 
+    // Delete Booking
     function deleteBooking(index) {
       if (confirm("Are you sure you want to delete this booking?")) {
         bookings.splice(index, 1);
         localStorage.setItem("bookings", JSON.stringify(bookings));
+        updateNotifications();
         renderBookings();
       }
     }
 
+    // Delete User
+    function deleteUser(index) {
+      if (confirm("Are you sure you want to delete this user?")) {
+        users.splice(index, 1);
+        localStorage.setItem("users", JSON.stringify(users));
+        updateNotifications();
+        renderUsers();
+      }
+    }
+
+    // Export to PDF
     async function exportToPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation: "landscape" });
@@ -296,12 +235,20 @@
           }
         });
       }
-
       doc.save("Booking_Records.pdf");
     }
 
+    // Notifications
+    function updateNotifications() {
+      document.getElementById("notifCount").innerText = bookings.length;
+      document.getElementById("userCount").innerText = users.length;
+      document.getElementById("lastUser").innerText = users.length > 0 ? users[users.length-1].username : "None";
+    }
+
     // Initial render
+    renderUsers();
     renderBookings();
+    updateNotifications();
   </script>
 </body>
   </html>
