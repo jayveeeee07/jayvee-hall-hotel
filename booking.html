@@ -1,84 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Online Reservation - Jayvee Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 12px;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .booking-summary {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+    .booking-summary div {
+      margin: 5px 0;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+
+  <!-- For PNG download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <!-- HEADER -->
-  
-
-  <!-- BOOKING FORM -->
-  <div class="form-container fade-in">
+  <div class="form-container fade-in" id="bookingCard">
     <h2>Online Reservation Form</h2>
     <form id="bookingForm">
-      <input type="text" name="fullName" placeholder="Enter Full Name" required>
-      <input type="number" name="numPeople" placeholder="Number of People" required>
-      
-      <label>Select Date of Stay:</label>
-      <input type="date" name="stayDate" required>
-
-      <input type="number" name="numDays" placeholder="Number of Days to Stay" required>
-
-      <!-- Payment Method -->
-      <label for="paymentMethod">Payment Method:</label>
-      <select id="paymentMethod" name="paymentMethod" onchange="showPaymentOptions()" required>
-        <option value="">-- Select Payment Method --</option>
-        <option value="cash">Cash on Arrival</option>
-        <option value="online">Online Payment</option>
+      <input type="text" id="name" placeholder="Enter Name" required />
+      <input type="number" id="people" placeholder="Number of People" required />
+      <input type="date" id="date" required />
+      <input type="number" id="days" placeholder="Number of Days to Stay" required />
+      <select id="payment" required>
+        <option value="">Select Payment Method</option>
+        <option value="Cash">Cash</option>
+        <option value="BDO Bank Transfer">BDO Bank Transfer</option>
+        <option value="Landbank Transfer">Landbank Transfer</option>
       </select>
-
-      <!-- Online Payment Options -->
-      <div id="onlinePayment" class="hidden">
-        <label for="bank">Select Bank:</label>
-        <select id="bank" name="bank">
-          <option value="">-- Select Bank --</option>
-          <option value="BDO">BDO</option>
-          <option value="Landbank">Landbank</option>
-          <option value="BPI">BPI</option>
-          <option value="Metrobank">Metrobank</option>
-        </select>
-
-        <!-- Face Scan -->
-        <div class="face-scan">
-          <p>Please scan your face for verification:</p>
-          <div class="face-box">📷 Face Scan</div>
-        </div>
-      </div>
-
-      <!-- OTP Confirmation -->
-      <label for="otp">Enter OTP (sent to your phone):</label>
-      <input type="text" id="otp" name="otp" placeholder="123456" maxlength="6" required>
-
       <button type="submit">Confirm Booking</button>
     </form>
+
+    <div class="booking-summary" id="bookingSummary" style="display:none;"></div>
   </div>
 
-  <!-- SCRIPT -->
   <script>
-    function showPaymentOptions() {
-      const paymentMethod = document.getElementById('paymentMethod').value;
-      const onlineDiv = document.getElementById('onlinePayment');
-      onlineDiv.classList.toggle('hidden', paymentMethod !== 'online');
-    }
-
-    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+    document.getElementById("bookingForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      // OTP Validation Simulation
-      const otp = document.getElementById('otp').value;
-      if (otp.length !== 6) {
-        alert("Invalid OTP. Please enter 6 digits.");
-        return;
-      }
+      // Collect booking data
+      const booking = {
+        name: document.getElementById("name").value,
+        people: document.getElementById("people").value,
+        date: document.getElementById("date").value,
+        days: document.getElementById("days").value,
+        payment: document.getElementById("payment").value
+      };
 
-      alert("Booking Confirmed! Redirecting to confirmation page...");
-      window.location.href = 'confirmation.html';
+      // Save to Admin Panel (localStorage)
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      bookings.push(booking);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+
+      // Show booking summary before screenshot
+      const summary = document.getElementById("bookingSummary");
+      summary.innerHTML = `
+        <div><strong>Name:</strong> ${booking.name}</div>
+        <div><strong>Number of People:</strong> ${booking.people}</div>
+        <div><strong>Date of Stay:</strong> ${booking.date}</div>
+        <div><strong>Number of Days:</strong> ${booking.days}</div>
+        <div><strong>Payment Method:</strong> ${booking.payment}</div>
+        <p style="margin-top:10px;color:green;"><strong>Booking Confirmed!</strong></p>
+      `;
+      summary.style.display = "block";
+
+      // Convert bookingCard to PNG
+      setTimeout(() => {
+        html2canvas(document.getElementById("bookingCard")).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "Booking_Confirmation.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+
+          alert("Your booking has been successfully confirmed!");
+          window.location.href = "home.html";
+        });
+      }, 1000);
     });
   </script>
-
 </body>
-        </html>
+  </html>
