@@ -18,14 +18,15 @@
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
       animation: fadeIn 1s ease-in-out;
+      text-align: center;
     }
     h2 {
-      text-align: center;
       margin-bottom: 20px;
     }
     .details {
-      margin: 15px 0;
+      margin: 10px 0;
       font-size: 16px;
+      text-align: left;
     }
     .details span {
       font-weight: bold;
@@ -52,7 +53,10 @@
       to {opacity: 1;}
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- For PNG screenshot -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
   <script defer>
     document.addEventListener("DOMContentLoaded", () => {
       const booking = JSON.parse(localStorage.getItem("lastBooking"));
@@ -63,6 +67,7 @@
         return;
       }
 
+      // Display booking details
       container.innerHTML = `
         <div class="details"><span>Name:</span> ${booking.name}</div>
         <div class="details"><span>Number of People:</span> ${booking.people}</div>
@@ -71,36 +76,26 @@
         <div class="details"><span>Payment Method:</span> ${booking.payment}</div>
       `;
 
-      // Save booking to main bookings list if not saved already
-      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      if (!bookings.some(b => JSON.stringify(b) === JSON.stringify(booking))) {
+      // Edit booking button
+      document.getElementById("editBtn").addEventListener("click", () => {
+        window.location.href = "booking.html"; // Go back to edit booking
+      });
+
+      // Confirm and save booking + download PNG
+      document.getElementById("confirmBtn").addEventListener("click", () => {
+        // Save to admin panel (bookings list)
+        let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
         bookings.push(booking);
         localStorage.setItem("bookings", JSON.stringify(bookings));
-      }
 
-      // PDF Download
-      document.getElementById("downloadBtn").addEventListener("click", () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.setFontSize(16);
-        doc.text("Jayvee Hall of Mansion - Booking Receipt", 20, 20);
-        doc.setFontSize(12);
-        doc.text(`Name: ${booking.name}`, 20, 40);
-        doc.text(`Number of People: ${booking.people}`, 20, 50);
-        doc.text(`Date of Stay: ${booking.date}`, 20, 60);
-        doc.text(`Number of Days: ${booking.days}`, 20, 70);
-        doc.text(`Payment Method: ${booking.payment}`, 20, 80);
-        doc.text("Thank you for booking with us!", 20, 100);
-        doc.save("Booking_Receipt.pdf");
-      });
+        // Generate PNG receipt using html2canvas
+        html2canvas(document.querySelector(".confirm-container")).then(canvas => {
+          const link = document.createElement("a");
+          link.download = "Booking_Confirmation.png";
+          link.href = canvas.toDataURL();
+          link.click();
+        });
 
-      // Edit Booking
-      document.getElementById("editBtn").addEventListener("click", () => {
-        window.location.href = "booking.html";
-      });
-
-      // Confirm and go to Home
-      document.getElementById("confirmBtn").addEventListener("click", () => {
         alert("Your booking has been successfully confirmed!");
         window.location.href = "home.html";
       });
@@ -114,8 +109,7 @@
 
     <div class="btn-group">
       <button id="editBtn">Edit</button>
-      <button id="downloadBtn">Download Receipt</button>
-      <button id="confirmBtn">Confirm</button>
+      <button id="confirmBtn">Confirm Booking</button>
     </div>
   </div>
 </body>
