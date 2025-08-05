@@ -3,318 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Jayvee Hall of Mansion</title>
-
-  <!-- jsPDF for PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <style>
-    body {
-      background: #f0f2f5;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-    .admin-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      animation: fadeIn 1s ease-in-out;
-    }
-    h2, h3 {
-      text-align: center;
-      color: #333;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-    }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #ddd;
-      font-size: 14px;
-    }
-    th {
-      background: #007bff;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-    .actions-bar {
-      text-align: right;
-      margin-bottom: 15px;
-    }
-    .export-btn, .clear-btn {
-      background: #28a745;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-left: 5px;
-    }
-    .export-btn:hover, .clear-btn:hover {
-      background: #218838;
-    }
-    .delete-btn {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .delete-btn:hover {
-      background: #b02a37;
-    }
-    button.logout {
-      padding: 10px 20px;
-      background: #007bff;
-      border: none;
-      color: #fff;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button.logout:hover {
-      background: #0056b3;
-    }
-    .no-data {
-      text-align: center;
-      padding: 20px;
-      color: #777;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
-    }
-    img {
-      border-radius: 50%;
-    }
-  </style>
+  <title>Admin Panel | Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div class="admin-container">
-    <h2>Admin Panel - Jayvee Hall of Mansion</h2>
-    <p style="text-align:center;">Manage users, bookings, and notifications from here.</p>
+<body class="fade-in">
 
-    <!-- Notifications -->
-    <h3>Notifications</h3>
-    <ul>
-      <li>Total Registered Users: <span id="userCount">0</span></li>
-      <li>Total Bookings: <span id="notifCount">0</span></li>
-      <li>Last Registered User: <span id="lastUser">None</span></li>
-    </ul>
+  <!-- Header -->
+  <header>
+    <h1>Admin Panel - Hall of Mansion</h1>
+    <nav>
+      <a href="home.html">Home</a>
+      <a href="booking.html">Bookings</a>
+      <a href="logout.html" class="btn btn-danger">Logout</a>
+    </nav>
+  </header>
 
-    <!-- Users Table -->
-    <h3>Registered Users</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Photo</th>
-          <th>Full Name</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Contact</th>
-          <th>Status</th>
-          <th>Birthdate</th>
-          <th>Age</th>
-          <th>Address</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="usersTable"></tbody>
-    </table>
-
-    <!-- Bookings Table -->
-    <h3>All Reservations / Online Bookings</h3>
-    <div class="actions-bar">
-      <button class="export-btn" onclick="exportToPDF()">Export to PDF</button>
-      <button class="export-btn" onclick="exportCSV()">Export to CSV</button>
-      <button class="clear-btn" onclick="clearData()">Clear All Data</button>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Name</th>
-          <th>Room</th>
-          <th>Room No.</th>
-          <th>People</th>
-          <th>Date</th>
-          <th>Days</th>
-          <th>Payment Method</th>
-          <th>Bank</th>
-          <th>Timestamp</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="bookingsTable"></tbody>
-    </table>
-
-    <!-- Logout Button -->
-    <div style="text-align:center; margin-top:20px;">
-      <button class="logout" onclick="window.location.href='login.html'">Logout</button>
-    </div>
-  </div>
-
-  <script>
-    const usersTable = document.getElementById("usersTable");
-    const bookingsTable = document.getElementById("bookingsTable");
-
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-
-    // Remove duplicate users (by username)
-    users = Array.from(new Map(users.map(u => [u.username, u])).values());
-    localStorage.setItem("users", JSON.stringify(users));
-
-    // Remove duplicate bookings (by name+date+roomNo)
-    bookings = Array.from(new Map(bookings.map(b => [b.name + b.date + b.roomNo, b])).values());
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    // Render Users
-    function renderUsers() {
-      usersTable.innerHTML = "";
-      if (users.length === 0) {
-        usersTable.innerHTML = `<tr><td colspan="10" class="no-data">No registered users yet.</td></tr>`;
-      } else {
-        users.forEach((u, index) => {
-          const fullName = `${u.firstName || ''} ${u.middleName || ''} ${u.lastName || ''} ${u.suffix || ''}`;
-          usersTable.innerHTML += `
+  <main class="container">
+    
+    <!-- Dashboard Section -->
+    <section class="card fade-in">
+      <h2>Manage Bookings</h2>
+      <p>Review and manage all user bookings below.</p>
+      
+      <div class="table-container">
+        <table>
+          <thead>
             <tr>
-              <td><img src="${u.photo || 'assets/default.png'}" width="50"></td>
-              <td>${fullName}</td>
-              <td>${u.username}</td>
-              <td>${u.email}</td>
-              <td>${u.contact}</td>
-              <td>${u.status || '-'}</td>
-              <td>${u.birthdate || '-'}</td>
-              <td>${u.age || '-'}</td>
-              <td>${u.address || '-'}</td>
-              <td><button class="delete-btn" onclick="deleteUser(${index})">Delete</button></td>
+              <th>Booking ID</th>
+              <th>User Name</th>
+              <th>Hall Name</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          `;
-        });
-      }
-    }
+          </thead>
+          <tbody>
+            <!-- Example booking row -->
+            <tr>
+              <td data-label="Booking ID">001</td>
+              <td data-label="User Name">John Doe</td>
+              <td data-label="Hall Name">Grand Ballroom</td>
+              <td data-label="Date">2025-08-10</td>
+              <td data-label="Time">6:00 PM</td>
+              <td data-label="Status">Pending</td>
+              <td data-label="Actions">
+                <button class="btn btn-success">Approve</button>
+                <button class="btn btn-danger">Reject</button>
+              </td>
+            </tr>
 
-    // Render Bookings
-    function renderBookings() {
-      bookingsTable.innerHTML = "";
-      if (bookings.length === 0) {
-        bookingsTable.innerHTML = `<tr><td colspan="11" class="no-data">No bookings yet.</td></tr>`;
-        return;
-      }
-      bookings.forEach((b, index) => {
-        bookingsTable.innerHTML += `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${b.name}</td>
-            <td>${b.room || '-'}</td>
-            <td>${b.roomNo || '-'}</td>
-            <td>${b.people || b.numPeople || '-'}</td>
-            <td>${b.date || b.dateStay || '-'}</td>
-            <td>${b.days || b.numDays || '-'}</td>
-            <td>${b.payment || b.paymentMethod || '-'}</td>
-            <td>${b.bank || '-'}</td>
-            <td>${b.timestamp || '-'}</td>
-            <td><button class="delete-btn" onclick="deleteBooking(${index})">Delete</button></td>
-          </tr>
-        `;
-      });
-    }
+            <!-- Example booking row -->
+            <tr>
+              <td data-label="Booking ID">002</td>
+              <td data-label="User Name">Jane Smith</td>
+              <td data-label="Hall Name">Crystal Hall</td>
+              <td data-label="Date">2025-08-12</td>
+              <td data-label="Time">2:00 PM</td>
+              <td data-label="Status">Confirmed</td>
+              <td data-label="Actions">
+                <button class="btn btn-warning">Cancel</button>
+              </td>
+            </tr>
 
-    // Delete Booking
-    function deleteBooking(index) {
-      if (confirm("Are you sure you want to delete this booking?")) {
-        bookings.splice(index, 1);
-        localStorage.setItem("bookings", JSON.stringify(bookings));
-        updateNotifications();
-        renderBookings();
-      }
-    }
+            <!-- If no bookings -->
+            <!-- <tr>
+              <td colspan="7" class="no-data">No bookings available.</td>
+            </tr> -->
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-    // Delete User
-    function deleteUser(index) {
-      if (confirm("Are you sure you want to delete this user?")) {
-        users.splice(index, 1);
-        localStorage.setItem("users", JSON.stringify(users));
-        updateNotifications();
-        renderUsers();
-      }
-    }
+    <!-- Admin Actions -->
+    <section class="card fade-in" style="margin-top: 30px;">
+      <h2>Admin Actions</h2>
+      <form>
+        <label for="hallName">Add New Hall</label>
+        <input type="text" id="hallName" placeholder="Enter hall name" required>
+        
+        <label for="capacity">Capacity</label>
+        <input type="number" id="capacity" placeholder="Enter hall capacity" required>
+        
+        <button type="submit" class="btn btn-primary">Add Hall</button>
+      </form>
+    </section>
 
-    // Export to PDF
-    async function exportToPDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF({ orientation: "landscape" });
+  </main>
 
-      doc.setFontSize(18);
-      doc.text("Jayvee Hall of Mansion - Booking Records", 14, 20);
-      doc.setFontSize(12);
+  <footer>
+    <p>&copy; 2025 Hall of Mansion. All rights reserved. | <a href="#">Privacy Policy</a></p>
+  </footer>
 
-      if (bookings.length === 0) {
-        doc.text("No bookings available.", 14, 40);
-      } else {
-        let y = 40;
-        bookings.forEach((b, index) => {
-          const info = `${index + 1}. ${b.name} | People: ${b.people || b.numPeople} | Date: ${b.date || b.dateStay} | Days: ${b.days || b.numDays} | Payment: ${b.payment || b.paymentMethod}`;
-          doc.text(info, 14, y);
-          y += 10;
-          if (y > 180) {
-            doc.addPage();
-            y = 20;
-          }
-        });
-      }
-      doc.save("Booking_Records.pdf");
-    }
-
-    // Export data as CSV
-    function exportCSV() {
-      if (bookings.length === 0) {
-        alert("No data to export.");
-        return;
-      }
-      let csv = "No,Name,Room,Room No.,People,Date,Days,Payment,Bank,Timestamp\n";
-      bookings.forEach((b, i) => {
-        csv += `${i+1},${b.name},${b.room || "-"},${b.roomNo || "-"},${b.people || b.numPeople || "-"},${b.date || b.dateStay || "-"},${b.days || b.numDays || "-"},${b.payment || b.paymentMethod || "-"},${b.bank || "-"},${b.timestamp || "-"}\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "Bookings.csv";
-      link.click();
-    }
-
-    // Clear all bookings
-    function clearData() {
-      if (confirm("Are you sure you want to delete all bookings?")) {
-        localStorage.removeItem("bookings");
-        bookings = [];
-        renderBookings();
-        updateNotifications();
-      }
-    }
-
-    // Notifications
-    function updateNotifications() {
-      document.getElementById("notifCount").innerText = bookings.length;
-      document.getElementById("userCount").innerText = users.length;
-      document.getElementById("lastUser").innerText = users.length > 0 ? users[users.length-1].username : "None";
-    }
-
-    // Initial render
-    renderUsers();
-    renderBookings();
-    updateNotifications();
-  </script>
 </body>
-            </html>
+</html>
