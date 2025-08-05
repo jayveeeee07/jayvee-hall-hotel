@@ -3,66 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Jayvee Hall of Mansion</title>
+  <title>Login - Jayvee Hall</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
   <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #f4f4f4;
-      font-family: Arial, sans-serif;
+    body { 
+      font-family: Arial, sans-serif; 
+      background: #f4f4f4; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      height: 100vh; 
     }
     .form-container {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background: white; 
+      padding: 20px; 
+      border-radius: 10px; 
+      box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+      width: 300px;
       text-align: center;
-      animation: fadeIn 0.8s ease-in-out;
     }
-    .form-container h2 {
-      margin-bottom: 20px;
-    }
-    .form-container input[type="text"],
-    .form-container input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
+    input {
+      width: 100%; 
+      padding: 10px; 
+      margin: 10px 0; 
+      border: 1px solid #ccc; 
       border-radius: 5px;
-      border: 1px solid #ccc;
     }
-    .remember-me {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      margin: 10px 0;
-      font-size: 0.9em;
-    }
-    .remember-me input {
-      margin-right: 5px;
-    }
-    .form-container button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: none;
+    button {
+      width: 100%; 
+      padding: 10px; 
+      margin: 10px 0; 
+      background: #28a745; 
+      color: white; 
+      border: none; 
       border-radius: 5px;
-      background: #333;
-      color: white;
       cursor: pointer;
     }
-    .form-container button:hover {
-      background: #555;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    button:hover { background: #218838; }
+    .admin-btn { background: #007bff; }
+    .admin-btn:hover { background: #0069d9; }
   </style>
 </head>
 <body>
@@ -71,73 +50,47 @@
     <form id="loginForm">
       <input type="text" id="username" placeholder="Enter Username" required>
       <input type="password" id="password" placeholder="Enter Password" required>
-      <div class="remember-me">
-        <input type="checkbox" id="rememberMe"> <label for="rememberMe">Remember Me</label>
-      </div>
       <button type="submit">Login</button>
       <button type="button" onclick="window.location.href='signup.html'">Register</button>
-      <button type="button" onclick="adminLogin()">Administrator</button>
+      <button type="button" class="admin-btn" onclick="adminLogin()">Administrator</button>
     </form>
   </div>
 
-  <script>
-    // Auto-login if "Remember Me" was selected
-    const rememberedUser = JSON.parse(localStorage.getItem("rememberedUser"));
-    if (rememberedUser) {
-      if (rememberedUser.role === "admin") {
-        window.location.href = "admin.html";
-      } else {
-        window.location.href = "home.html";
-      }
+<script>
+  // ✅ User Login Validation
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    // Retrieve users from localStorage
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check if credentials match any user
+    const validUser = users.find(u => u.username === username && u.password === password);
+
+    if (validUser) {
+      alert("✅ Login successful! Redirecting to Home...");
+      localStorage.setItem("currentUser", JSON.stringify(validUser));
+      window.location.href = "home.html";
+    } else {
+      alert("❌ Invalid username or password.");
     }
+  });
 
-    // Normal User Login
-    document.getElementById("loginForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+  // ✅ Admin Login
+  function adminLogin() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const rememberMe = document.getElementById("rememberMe").checked;
-
-      // Fetch users from LocalStorage
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-
-      // Match credentials
-      const foundUser = users.find(u => u.username === username && u.password === password);
-
-      if (foundUser) {
-        alert(`Welcome back, ${foundUser.firstName || username}!`);
-        localStorage.setItem("loggedInUser", JSON.stringify(foundUser));
-
-        // Save to rememberedUser if "Remember Me" checked
-        if (rememberMe) {
-          localStorage.setItem("rememberedUser", JSON.stringify({ ...foundUser, role: "user" }));
-        }
-
-        window.location.href = "home.html"; // Redirect to home
-      } else {
-        alert("Invalid Username or Password. Please register first.");
-      }
-    });
-
-    // Administrator Login
-    function adminLogin() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const rememberMe = document.getElementById("rememberMe").checked;
-
-      if (username === "admin" && password === "admin123") {
-        alert("Administrator login successful!");
-
-        if (rememberMe) {
-          localStorage.setItem("rememberedUser", JSON.stringify({ username: "admin", role: "admin" }));
-        }
-
-        window.location.href = "admin.html";
-      } else {
-        alert("Invalid administrator credentials.");
-      }
+    if (username === "admin" && password === "admin123") {
+      alert("✅ Admin Login Successful!");
+      window.location.href = "admin.html";
+    } else {
+      alert("❌ Invalid Admin Credentials.");
     }
-  </script>
+  }
+</script>
 </body>
-  </html>
+        </html>
