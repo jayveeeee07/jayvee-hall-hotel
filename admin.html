@@ -6,202 +6,208 @@
   <title>Admin Panel - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    /* Fullscreen background */
     body {
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background: url('assets/bgindex.jpg') no-repeat center center fixed;
+      background-size: cover;
       min-height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      font-family: 'Arial', sans-serif;
-      background: url('assets/bgindex.jpg') no-repeat center center/cover;
+      flex-direction: column;
       color: #fff;
     }
 
-    /* Overlay */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      z-index: 0;
-    }
-
-    /* Container */
-    .admin-container {
-      position: relative;
-      z-index: 1;
-      width: 95%;
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 30px;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      box-shadow: 0 0 25px rgba(0,0,0,0.3);
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    .admin-container h2 {
+    header {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
       text-align: center;
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #fff;
+      font-size: 24px;
     }
 
-    /* Table Styling */
+    .admin-container {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
-      font-size: 0.9rem;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-radius: 8px;
+      overflow: hidden;
     }
 
-    table thead {
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    table th, table td {
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,0.2);
+    th, td {
+      padding: 12px 15px;
       text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #333;
       color: #fff;
     }
 
-    table tr:nth-child(even) {
-      background: rgba(255, 255, 255, 0.05);
+    tr:hover {
+      background: rgba(0,0,0,0.05);
     }
 
-    /* Buttons */
-    .btn {
-      padding: 6px 12px;
-      margin: 2px;
-      font-size: 0.85rem;
+    .btn-approve, .btn-reject {
+      border: none;
+      padding: 8px 14px;
+      margin: 3px;
+      cursor: pointer;
+      border-radius: 6px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .btn-approve {
+      background: #28a745;
+    }
+    .btn-reject {
+      background: #dc3545;
+    }
+    .btn-approve:hover { background: #218838; }
+    .btn-reject:hover { background: #c82333; }
+
+    .logout-btn {
+      margin-top: 20px;
+      background: #ff9800;
+      color: #fff;
+      padding: 10px 20px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      transition: 0.3s;
+      font-size: 16px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .approve-btn {
-      background: #28a745;
+    .logout-btn:hover {
+      background: #e68900;
+    }
+
+    /* Notification popup */
+    #notification {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      background: rgba(0,0,0,0.8);
       color: #fff;
-    }
-    .approve-btn:hover { background: #1e7e34; }
-
-    .reject-btn {
-      background: #dc3545;
-      color: #fff;
-    }
-    .reject-btn:hover { background: #a71d2a; }
-
-    /* Back link */
-    .back-link {
-      display: inline-block;
-      margin: 15px 0;
-      color: #00c3ff;
-      text-decoration: none;
-      font-size: 0.95rem;
+      font-weight: bold;
+      border-radius: 8px;
+      z-index: 1000;
     }
 
-    .back-link:hover {
-      text-decoration: underline;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(30px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-
-    /* Responsive */
     @media (max-width: 768px) {
       table {
-        font-size: 0.75rem;
+        font-size: 14px;
       }
-      table th, table td {
-        padding: 6px;
+      th, td {
+        padding: 10px;
       }
-    }
-
-    @media (max-width: 500px) {
-      .admin-container {
-        padding: 20px 10px;
-      }
-      table {
-        font-size: 0.65rem;
-      }
-      .btn {
-        padding: 4px 8px;
-        font-size: 0.7rem;
+      header {
+        font-size: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="admin-container">
-    <h2>Admin Panel - Bookings</h2>
-    <a href="index.html" class="back-link">← Back to Home</a>
-    <table id="bookingTable">
-      <thead>
-        <tr>
-          <th>Guest Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Room Type</th>
-          <th>Guests</th>
-          <th>Check-In</th>
-          <th>Check-Out</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Bookings will appear here -->
-      </tbody>
-    </table>
-  </div>
 
-  <script>
-    function loadBookings() {
-      const tableBody = document.querySelector("#bookingTable tbody");
-      tableBody.innerHTML = "";
-      const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+<header>
+  Admin Dashboard - Jayvee Hall of Mansion
+</header>
 
-      if (bookings.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="9">No bookings found.</td></tr>`;
-        return;
-      }
+<div class="admin-container">
+  <h2>Booking Management</h2>
+  <p>Approve or reject room bookings from users below:</p>
 
-      bookings.forEach((booking, index) => {
-        const row = document.createElement("tr");
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Room</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bookingTable">
+      <!-- Populated dynamically -->
+    </tbody>
+  </table>
 
-        row.innerHTML = `
-          <td>${booking.fullName}</td>
-          <td>${booking.email}</td>
-          <td>${booking.phone}</td>
-          <td>${booking.roomType}</td>
-          <td>${booking.guests}</td>
-          <td>${booking.checkIn}</td>
-          <td>${booking.checkOut}</td>
-          <td>${booking.status}</td>
-          <td>
-            <button class="btn approve-btn" onclick="updateStatus(${index}, 'Approved')">Approve</button>
-            <button class="btn reject-btn" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div id="notification"></div>
+
+<script>
+  // Load bookings from localStorage
+  function loadBookings() {
+    const table = document.getElementById("bookingTable");
+    table.innerHTML = "";
+
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+    if (bookings.length === 0) {
+      table.innerHTML = `<tr><td colspan="5">No bookings yet.</td></tr>`;
+      return;
     }
 
-    function updateStatus(index, status) {
-      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      bookings[index].status = status;
-      localStorage.setItem("bookings", JSON.stringify(bookings));
-      loadBookings();
-    }
+    bookings.forEach((booking, index) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${booking.name}</td>
+        <td>${booking.room}</td>
+        <td>${booking.date}</td>
+        <td>${booking.status}</td>
+        <td>
+          <button class="btn-approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
+          <button class="btn-reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+  }
 
+  // Update booking status
+  function updateStatus(index, status) {
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings[index].status = status;
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+    showNotification(`Booking ${status}!`, status === "Approved");
     loadBookings();
-  </script>
+  }
+
+  function logout() {
+    window.location.href = "login.html";
+  }
+
+  // Show temporary notification
+  function showNotification(message, isSuccess) {
+    const notif = document.getElementById("notification");
+    notif.textContent = message;
+    notif.style.display = "block";
+    notif.style.background = isSuccess ? "rgba(40,167,69,0.9)" : "rgba(220,53,69,0.9)";
+    setTimeout(() => notif.style.display = "none", 4000);
+  }
+
+  // Load bookings on page start
+  window.onload = loadBookings;
+</script>
+
 </body>
 </html>
