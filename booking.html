@@ -1,131 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Online Reservation - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking - Jayvee Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: #f4f4f4;
+      padding: 20px;
     }
-    .form-container {
-      max-width: 600px;
-      margin: 40px auto;
+    .booking-container {
       background: white;
+      max-width: 500px;
+      margin: auto;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      animation: fadeIn 0.8s ease-in-out;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h2 {
+    .booking-container h2 {
       text-align: center;
-      margin-bottom: 20px;
     }
-    input, select {
+    .booking-container input, 
+    .booking-container select {
       width: 100%;
       padding: 10px;
       margin: 8px 0;
       border: 1px solid #ccc;
       border-radius: 5px;
     }
-    button {
-      padding: 12px;
+    .booking-container button {
       width: 100%;
-      background: #007bff;
-      color: white;
+      padding: 10px;
+      margin-top: 10px;
       border: none;
-      border-radius: 5px;
+      background: #333;
+      color: white;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
+      border-radius: 5px;
     }
-    button:hover {
-      background: #0056b3;
+    .booking-container button:hover {
+      background: #555;
     }
-    .booking-summary {
+    .receipt {
       margin-top: 20px;
-      padding: 15px;
-      background: #f9f9f9;
-      border-radius: 8px;
-    }
-    .booking-summary div {
-      margin: 5px 0;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+      padding: 10px;
+      border: 2px dashed #999;
+      background: #fafafa;
     }
   </style>
-
-  <!-- For PNG download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <div class="form-container fade-in" id="bookingCard">
-    <h2>Online Reservation Form</h2>
-    <form id="bookingForm">
-      <input type="text" id="name" placeholder="Enter Name" required />
-      <input type="number" id="people" placeholder="Number of People" required />
-      <input type="date" id="date" required />
-      <input type="number" id="days" placeholder="Number of Days to Stay" required />
-      <select id="payment" required>
-        <option value="">Select Payment Method</option>
-        <option value="Cash">Cash</option>
-        <option value="BDO Bank Transfer">BDO Bank Transfer</option>
-        <option value="Landbank Transfer">Landbank Transfer</option>
+
+<div class="booking-container" id="bookingSection">
+  <h2>Online Reservation</h2>
+  <form id="bookingForm">
+    <label>Selected Room:</label>
+    <input type="text" id="roomName" name="roomName" readonly required>
+
+    <label>Name:</label>
+    <input type="text" name="fullName" placeholder="Enter Full Name" required>
+
+    <label>Number of People:</label>
+    <input type="number" name="numPeople" required>
+
+    <label>Select Date of Stay:</label>
+    <input type="date" name="dateStay" required>
+
+    <label>Number of Days to Stay:</label>
+    <input type="number" name="numDays" required>
+
+    <label>Payment Method:</label>
+    <select name="paymentMethod" id="paymentMethod" required>
+      <option value="">Select Payment Method</option>
+      <option value="Cash">Cash</option>
+      <option value="Online">Online Payment</option>
+    </select>
+
+    <div id="bankOptions" style="display:none;">
+      <label>Select Bank:</label>
+      <select name="bankSelect">
+        <option value="BDO">BDO</option>
+        <option value="Landbank">Landbank</option>
+        <option value="BPI">BPI</option>
       </select>
-      <button type="submit">Confirm Booking</button>
-    </form>
+    </div>
 
-    <div class="booking-summary" id="bookingSummary" style="display:none;"></div>
+    <button type="submit">Confirm Booking</button>
+  </form>
+
+  <div id="receipt" class="receipt" style="display:none;">
+    <h3>Booking Confirmation</h3>
+    <p><strong>Room:</strong> <span id="rRoom"></span></p>
+    <p><strong>Name:</strong> <span id="rName"></span></p>
+    <p><strong>Guests:</strong> <span id="rPeople"></span></p>
+    <p><strong>Date of Stay:</strong> <span id="rDate"></span></p>
+    <p><strong>Number of Days:</strong> <span id="rDays"></span></p>
+    <p><strong>Payment:</strong> <span id="rPayment"></span></p>
+    <p><strong>Bank:</strong> <span id="rBank"></span></p>
+    <button id="downloadReceipt">Download as PNG</button>
   </div>
+</div>
 
-  <script>
-    document.getElementById("bookingForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+<script>
+  // Load selected room from URL
+  const params = new URLSearchParams(window.location.search);
+  document.getElementById("roomName").value = params.get("room") || "No Room Selected";
 
-      // Collect booking data
-      const booking = {
-        name: document.getElementById("name").value,
-        people: document.getElementById("people").value,
-        date: document.getElementById("date").value,
-        days: document.getElementById("days").value,
-        payment: document.getElementById("payment").value
-      };
+  // Show bank options for online payment
+  document.getElementById("paymentMethod").addEventListener("change", function() {
+    document.getElementById("bankOptions").style.display = this.value === "Online" ? "block" : "none";
+  });
 
-      // Save to Admin Panel (localStorage)
-      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-      bookings.push(booking);
-      localStorage.setItem("bookings", JSON.stringify(bookings));
+  // Handle booking form submission
+  document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-      // Show booking summary before screenshot
-      const summary = document.getElementById("bookingSummary");
-      summary.innerHTML = `
-        <div><strong>Name:</strong> ${booking.name}</div>
-        <div><strong>Number of People:</strong> ${booking.people}</div>
-        <div><strong>Date of Stay:</strong> ${booking.date}</div>
-        <div><strong>Number of Days:</strong> ${booking.days}</div>
-        <div><strong>Payment Method:</strong> ${booking.payment}</div>
-        <p style="margin-top:10px;color:green;"><strong>Booking Confirmed!</strong></p>
-      `;
-      summary.style.display = "block";
+    const formData = new FormData(this);
+    const booking = {
+      roomName: formData.get("roomName"),
+      fullName: formData.get("fullName"),
+      numPeople: formData.get("numPeople"),
+      dateStay: formData.get("dateStay"),
+      numDays: formData.get("numDays"),
+      paymentMethod: formData.get("paymentMethod"),
+      bank: formData.get("bankSelect") || "N/A",
+      timestamp: new Date().toLocaleString()
+    };
 
-      // Convert bookingCard to PNG
-      setTimeout(() => {
-        html2canvas(document.getElementById("bookingCard")).then(canvas => {
-          const link = document.createElement("a");
-          link.download = "Booking_Confirmation.png";
-          link.href = canvas.toDataURL("image/png");
-          link.click();
+    // Save to localStorage for Admin Panel
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    bookings.push(booking);
+    localStorage.setItem("bookings", JSON.stringify(bookings));
 
-          alert("Your booking has been successfully confirmed!");
-          window.location.href = "home.html";
-        });
-      }, 1000);
+    // Display Receipt
+    document.getElementById("rRoom").innerText = booking.roomName;
+    document.getElementById("rName").innerText = booking.fullName;
+    document.getElementById("rPeople").innerText = booking.numPeople;
+    document.getElementById("rDate").innerText = booking.dateStay;
+    document.getElementById("rDays").innerText = booking.numDays;
+    document.getElementById("rPayment").innerText = booking.paymentMethod;
+    document.getElementById("rBank").innerText = booking.bank;
+    document.getElementById("receipt").style.display = "block";
+  });
+
+  // Download booking as PNG
+  document.getElementById("downloadReceipt").addEventListener("click", function() {
+    html2canvas(document.getElementById("receipt")).then(canvas => {
+      const link = document.createElement("a");
+      link.download = "BookingReceipt.png";
+      link.href = canvas.toDataURL();
+      link.click();
     });
-  </script>
+  });
+</script>
+
 </body>
-  </html>
+      </html>
