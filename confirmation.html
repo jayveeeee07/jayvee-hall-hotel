@@ -1,35 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Confirmation - Jayvee Hall</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
-<script src="html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmation - Jayvee Hall of Mansion</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #f0f2f5;
+      font-family: Arial, sans-serif;
+    }
+    .confirm-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      animation: fadeIn 1s ease-in-out;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .details {
+      margin: 15px 0;
+      font-size: 16px;
+    }
+    .details span {
+      font-weight: bold;
+      color: #333;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+      const booking = JSON.parse(localStorage.getItem("lastBooking"));
+      const container = document.getElementById("bookingDetails");
+
+      if (!booking) {
+        container.innerHTML = "<p>No booking data found. Please make a reservation first.</p>";
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="details"><span>Name:</span> ${booking.name}</div>
+        <div class="details"><span>Number of People:</span> ${booking.people}</div>
+        <div class="details"><span>Date of Stay:</span> ${booking.date}</div>
+        <div class="details"><span>Number of Days:</span> ${booking.days}</div>
+        <div class="details"><span>Payment Method:</span> ${booking.payment}</div>
+      `;
+
+      // Save booking to main bookings list if not saved already
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+      if (!bookings.some(b => JSON.stringify(b) === JSON.stringify(booking))) {
+        bookings.push(booking);
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+      }
+
+      // PDF Download
+      document.getElementById("downloadBtn").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text("Jayvee Hall of Mansion - Booking Receipt", 20, 20);
+        doc.setFontSize(12);
+        doc.text(`Name: ${booking.name}`, 20, 40);
+        doc.text(`Number of People: ${booking.people}`, 20, 50);
+        doc.text(`Date of Stay: ${booking.date}`, 20, 60);
+        doc.text(`Number of Days: ${booking.days}`, 20, 70);
+        doc.text(`Payment Method: ${booking.payment}`, 20, 80);
+        doc.text("Thank you for booking with us!", 20, 100);
+        doc.save("Booking_Receipt.pdf");
+      });
+
+      // Edit Booking
+      document.getElementById("editBtn").addEventListener("click", () => {
+        window.location.href = "booking.html";
+      });
+
+      // Confirm and go to Home
+      document.getElementById("confirmBtn").addEventListener("click", () => {
+        alert("Your booking has been successfully confirmed!");
+        window.location.href = "home.html";
+      });
+    });
+  </script>
 </head>
 <body>
-<div class="form-container fade-in" id="receipt">
-  <h2>Booking Confirmation</h2>
-  <div id="bookingDetails"></div>
-  <button onclick="downloadReceipt()">Download this Receipt</button>
-  <button onclick="window.location.href='home.html'">Back to Home</button>
-</div>
+  <div class="confirm-container fade-in">
+    <h2>Booking Confirmation</h2>
+    <div id="bookingDetails"></div>
 
-<script>
-const bookings = loadData('bookings');
-const last = bookings[bookings.length-1];
-const details = document.getElementById('bookingDetails');
-if(last){
-  details.innerHTML = `
-    <p>Name: ${last.name}</p>
-    <p>Number of People: ${last.people}</p>
-    <p>Date of Stay: ${last.date}</p>
-    <p>Days: ${last.days}</p>
-    <p>Payment: ${last.payment}</p>
-    ${last.bank ? `<p>Bank: ${last.bank}</p>` : ""}
-  `;
-}
-</script>
+    <div class="btn-group">
+      <button id="editBtn">Edit</button>
+      <button id="downloadBtn">Download Receipt</button>
+      <button id="confirmBtn">Confirm</button>
+    </div>
+  </div>
 </body>
 </html>
