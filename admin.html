@@ -3,33 +3,71 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Jayvee Hall of Mansion</title>
+  <title>Admin - Jayvee Hall of Mansion</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: url('assets/admin-bg.jpg') no-repeat center center fixed;
-      background-size: cover;
       margin: 0;
-      color: #fff;
+      padding: 0;
+      background: url('assets/admin-bg.jpg') no-repeat center center/cover;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 20px;
     }
 
-    h2 {
-      text-align: center;
-      margin-top: 20px;
+    header {
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .notif-bell {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .notif-bell::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -5px;
+      right: -8px;
+      background: red;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .notif-bell[data-count]:not([data-count="0"])::after {
+      display: block;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .admin-container {
+      flex: 1;
+      padding: 20px;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
-      max-width: 900px;
-      margin-top: 20px;
       border-collapse: collapse;
-      background: rgba(0,0,0,0.6);
+      background: white;
       border-radius: 10px;
       overflow: hidden;
     }
@@ -37,59 +75,29 @@
     th, td {
       padding: 12px;
       text-align: center;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-bottom: 1px solid #ddd;
     }
 
     th {
-      background: rgba(0,0,0,0.8);
+      background: #333;
+      color: white;
     }
 
-    tr:hover {
-      background: rgba(255,255,255,0.1);
-    }
+    tr:hover { background: #f2f2f2; }
 
-    .btn {
+    button {
       padding: 6px 12px;
       border: none;
-      border-radius: 6px;
-      color: white;
       cursor: pointer;
+      border-radius: 5px;
+      margin: 2px;
       font-size: 14px;
     }
 
-    .approve { background: #28a745; }
-    .approve:hover { background: #218838; }
-
-    .reject { background: #dc3545; }
-    .reject:hover { background: #b52a38; }
-
-    .view { background: #2196f3; }
-    .view:hover { background: #0b7dda; }
-
-    /* Notification Panel */
-    .notifications {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(0,0,0,0.8);
-      padding: 15px;
-      border-radius: 10px;
-      max-width: 250px;
-      display: none;
-    }
-
-    .notifications h4 {
-      margin: 0 0 10px;
-      color: #ffeb3b;
-    }
-
-    .notification-item {
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      font-size: 14px;
-    }
+    .approve { background: #28a745; color: white; }
+    .reject { background: #dc3545; color: white; }
+    .details { background: #007bff; color: white; }
+    .receipt { background: #6f42c1; color: white; }
 
     /* Modal */
     .modal {
@@ -100,161 +108,203 @@
       background: rgba(0,0,0,0.7);
       justify-content: center;
       align-items: center;
+      z-index: 1000;
     }
-
     .modal-content {
-      background: #222;
+      background: white;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 10px;
       width: 400px;
-      color: #fff;
+      max-width: 90%;
       position: relative;
-      text-align: center;
+      animation: fadeIn 0.3s ease-in-out;
     }
-
     .close {
       position: absolute;
       top: 10px; right: 15px;
       font-size: 22px;
       cursor: pointer;
-      color: #fff;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .download-btn {
-      background: #ff9800;
-      margin-top: 10px;
-      width: 100%;
+    /* Notification popup */
+    .notif-popup {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      display: none;
+      z-index: 2000;
+      animation: fadeIn 0.5s ease-in-out;
     }
 
+    @media (max-width: 768px) {
+      table { font-size: 12px; }
+      th, td { padding: 8px; }
+      .modal-content { width: 90%; }
+    }
   </style>
 </head>
 <body>
 
-  <h2>Admin Panel - Booking Management</h2>
+<header>
+  Admin Panel - Jayvee Hall of Mansion
+  <div class="notif-bell" id="notifBell" data-count="0">🔔</div>
+</header>
 
-  <table id="bookingTable">
+<div class="admin-container">
+  <table>
     <thead>
       <tr>
-        <th>Name</th>
+        <th>User</th>
         <th>Room</th>
         <th>Date</th>
         <th>Status</th>
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody id="bookingTable"></tbody>
   </table>
+</div>
 
-  <!-- Notifications -->
-  <div class="notifications" id="notificationPanel">
-    <h4>Notifications</h4>
-    <div id="notificationList"></div>
-  </div>
+<div class="notif-popup" id="notifPopup">New booking received!</div>
 
-  <!-- Booking Details Modal -->
-  <div id="detailsModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h3>Booking Details</h3>
-      <p><strong>Name:</strong> <span id="modalName"></span></p>
-      <p><strong>Room:</strong> <span id="modalRoom"></span></p>
-      <p><strong>Date:</strong> <span id="modalDate"></span></p>
-      <p><strong>Status:</strong> <span id="modalStatus"></span></p>
-      <button class="btn download-btn" onclick="downloadReceipt()">Download Receipt</button>
-    </div>
+<!-- Details Modal -->
+<div id="detailsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeDetails()">&times;</span>
+    <h3>Booking Details</h3>
+    <p><b>User:</b> <span id="detailUser"></span></p>
+    <p><b>Room:</b> <span id="detailRoom"></span></p>
+    <p><b>Date:</b> <span id="detailDate"></span></p>
+    <p><b>Status:</b> <span id="detailStatus"></span></p>
   </div>
+</div>
 
 <script>
-  const { jsPDF } = window.jspdf;
   let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-  let selectedBooking = null;
+  let lastBookingCount = bookings.length;
 
-  function renderTable() {
-    const tbody = document.querySelector("#bookingTable tbody");
-    tbody.innerHTML = "";
+  function loadBookings() {
+    bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    const table = document.getElementById("bookingTable");
+    table.innerHTML = "";
 
-    bookings.forEach((booking, index) => {
-      const row = document.createElement("tr");
+    if (bookings.length === 0) {
+      table.innerHTML = "<tr><td colspan='5'>No bookings yet</td></tr>";
+      return;
+    }
 
-      row.innerHTML = `
-        <td>${booking.name || "Unknown"}</td>
-        <td>${booking.room || "N/A"}</td>
-        <td>${booking.date || "N/A"}</td>
-        <td>${booking.status || "Pending"}</td>
-        <td>
-          <button class="btn approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
-          <button class="btn reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
-          <button class="btn view" onclick="viewDetails(${index})">View</button>
-        </td>
+    bookings.forEach((b, index) => {
+      table.innerHTML += `
+        <tr>
+          <td>${b.name || "Unknown"}</td>
+          <td>${b.room}</td>
+          <td>${b.date || "N/A"}</td>
+          <td style="font-weight:bold; color:${b.status === 'Approved' ? 'green' : b.status === 'Rejected' ? 'red' : 'orange'};">
+            ${b.status}
+          </td>
+          <td>
+            <button class="approve" onclick="updateStatus(${index}, 'Approved')">Approve</button>
+            <button class="reject" onclick="updateStatus(${index}, 'Rejected')">Reject</button>
+            <button class="details" onclick="showDetails(${index})">Details</button>
+            <button class="receipt" onclick="downloadReceipt(${index})">Receipt</button>
+          </td>
+        </tr>
       `;
-      tbody.appendChild(row);
     });
   }
 
   function updateStatus(index, status) {
     bookings[index].status = status;
     localStorage.setItem("bookings", JSON.stringify(bookings));
-    renderTable();
-    showNotification(`${bookings[index].name}'s booking has been ${status.toLowerCase()}`);
+    loadBookings();
+    alert(`Booking ${status}!`);
   }
 
-  function showNotification(message) {
-    const panel = document.getElementById("notificationPanel");
-    const list = document.getElementById("notificationList");
-
-    const item = document.createElement("div");
-    item.classList.add("notification-item");
-    item.textContent = message;
-    list.prepend(item);
-
-    panel.style.display = "block";
-
-    setTimeout(() => {
-      if (item.parentNode) item.remove();
-      if (!list.children.length) panel.style.display = "none";
-    }, 4000);
-  }
-
-  function viewDetails(index) {
-    selectedBooking = bookings[index];
-    document.getElementById("modalName").innerText = selectedBooking.name;
-    document.getElementById("modalRoom").innerText = selectedBooking.room;
-    document.getElementById("modalDate").innerText = selectedBooking.date;
-    document.getElementById("modalStatus").innerText = selectedBooking.status;
+  function showDetails(index) {
+    const b = bookings[index];
+    document.getElementById("detailUser").innerText = b.name || "Unknown";
+    document.getElementById("detailRoom").innerText = b.room;
+    document.getElementById("detailDate").innerText = b.date || "N/A";
+    document.getElementById("detailStatus").innerText = b.status;
     document.getElementById("detailsModal").style.display = "flex";
   }
 
-  function closeModal() {
+  function closeDetails() {
     document.getElementById("detailsModal").style.display = "none";
   }
 
-  function downloadReceipt() {
-    if (!selectedBooking) return;
+  async function downloadReceipt(index) {
+    const { jsPDF } = window.jspdf;
+    const booking = bookings[index];
 
-    const doc = new jsPDF("p", "pt", "a4");
+    const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
 
-    const img = new Image();
-    img.src = 'assets/receipt-bg.jpg'; // Add a background image for the receipt
-    img.onload = function() {
-      doc.addImage(img, 'JPEG', 0, 0, 595, 842);
+    // Background
+    const bg = new Image();
+    bg.src = "assets/receipt-bg.jpg";
 
-      doc.setFontSize(22);
-      doc.setTextColor(0,0,0);
-      doc.text("Jayvee Hall of Mansion - Booking Receipt", 60, 120);
-      doc.setFontSize(14);
-      doc.text(`Name: ${selectedBooking.name}`, 100, 200);
-      doc.text(`Room: ${selectedBooking.room}`, 100, 230);
-      doc.text(`Date: ${selectedBooking.date}`, 100, 260);
-      doc.text(`Status: ${selectedBooking.status}`, 100, 290);
-      doc.text("Thank you for choosing us!", 100, 350);
+    bg.onload = function() {
+      pdf.addImage(bg, "JPEG", 0, 0, 420, 595);
 
-      doc.save("Booking_Receipt.pdf");
+      // Logo
+      const logo = new Image();
+      logo.src = "assets/logo.png"; 
+      logo.onload = function() {
+        pdf.addImage(logo, "PNG", 160, 20, 100, 50);
+
+        pdf.setFontSize(16);
+        pdf.text("Jayvee Hall of Mansion - Booking Receipt", 30, 100);
+        pdf.setFontSize(12);
+        pdf.text(`User: ${booking.name || "Unknown"}`, 30, 140);
+        pdf.text(`Room: ${booking.room}`, 30, 160);
+        pdf.text(`Date: ${booking.date || "N/A"}`, 30, 180);
+        pdf.text(`Status: ${booking.status}`, 30, 200);
+
+        // QR Code generation
+        const qr = qrcode(0, "L");
+        qr.addData(`Booking for ${booking.name || "Guest"} - ${booking.room} - ${booking.date}`);
+        qr.make();
+        const qrImg = qr.createDataURL();
+
+        pdf.addImage(qrImg, "PNG", 300, 140, 80, 80);
+
+        pdf.save(`Booking_Receipt_${booking.name || "Guest"}.pdf`);
+      };
     };
   }
 
-  // Initialize
-  renderTable();
+  function showNotification() {
+    const bell = document.getElementById("notifBell");
+    const popup = document.getElementById("notifPopup");
+    let newCount = bookings.length - lastBookingCount;
+    if (newCount > 0) {
+      bell.setAttribute("data-count", newCount);
+      popup.style.display = "block";
+      setTimeout(() => popup.style.display = "none", 3000);
+    }
+  }
+
+  // Real-time booking check
+  setInterval(() => {
+    let currentBookings = JSON.parse(localStorage.getItem("bookings")) || [];
+    if (currentBookings.length > lastBookingCount) {
+      bookings = currentBookings;
+      loadBookings();
+      showNotification();
+      lastBookingCount = currentBookings.length;
+    }
+  }, 2000);
+
+  window.onload = loadBookings;
 </script>
 
 </body>
-</html>
+                                                       </html>
