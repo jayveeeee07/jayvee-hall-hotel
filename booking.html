@@ -3,154 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Booking - Jayvee Hall of Mansion</title>
+  <title>Book a Room - Jayvee Hall of Mansion</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-    .form-container, .details-container {
-      background: white; padding: 20px; border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 500px; margin: 20px auto;
+    /* Fullscreen Background */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: url('assets/bgindex.jpg') no-repeat center center/cover;
+      font-family: 'Arial', sans-serif;
+      color: #fff;
     }
-    input, select {
-      width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc;
+
+    /* Dark Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 0;
     }
-    button { 
-      padding: 10px 20px; background: #28a745; color: white; 
-      border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;
+
+    /* Glass Booking Form */
+    .booking-container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 500px;
+      padding: 35px 30px;
+      border-radius: 15px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 1.3s ease-in-out;
     }
-    button:hover { background: #218838; }
-    .details-container { display: none; }
-    .details-container h3 { margin-top: 0; }
-    .btn-download { background: #007bff; }
-    .btn-download:hover { background: #0069d9; }
-    .payment-info { display:none; background:#eef; padding:10px; border-radius:5px; margin-top:10px; }
-    .proof-upload { display:none; margin-top: 10px; }
+
+    .booking-container h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .booking-container input, .booking-container select {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      background: rgba(255,255,255,0.85);
+      color: #333;
+    }
+
+    .booking-container button {
+      width: 100%;
+      padding: 12px 0;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      background: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .booking-container button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .booking-container p {
+      margin-top: 15px;
+      font-size: 0.9rem;
+    }
+
+    .booking-container a {
+      color: #00c3ff;
+      text-decoration: none;
+    }
+
+    .booking-container a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(30px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      .booking-container {
+        padding: 30px 20px;
+      }
+      .booking-container h2 {
+        font-size: 1.6rem;
+      }
+    }
   </style>
 </head>
 <body>
-
-  <div class="form-container">
-    <h2>Online Reservation Form</h2>
-    <form id="bookingForm">
-      <input type="text" id="name" placeholder="Enter Full Name" required>
-      <input type="number" id="people" placeholder="Number of People" required>
-      <input type="date" id="date" required>
-      
-      <select id="payment" required>
-        <option value="">Select Payment Method</option>
-        <option value="Cash">Cash</option>
-        <option value="Gcash">Gcash</option>
-        <option value="Seabank">Seabank</option>
-      </select>
-
-      <!-- Dynamic Payment Info -->
-      <div id="paymentInfo" class="payment-info"></div>
-
-      <!-- Upload Payment Proof -->
-      <div class="proof-upload" id="proofUpload">
-        <label><strong>Send Payment Proof:</strong></label>
-        <input type="file" id="paymentProof" accept="image/*">
-      </div>
-
-      <button type="submit">Confirm Booking</button>
-    </form>
+  <div class="booking-container">
+    <h2>Book a Room</h2>
+    <input type="text" id="fullName" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <select id="roomType" required>
+      <option value="">Select Room Type</option>
+      <option value="Deluxe Room">Deluxe Room</option>
+      <option value="Suite Room">Suite Room</option>
+      <option value="Family Room">Family Room</option>
+      <option value="Presidential Room">Presidential Room</option>
+    </select>
+    <input type="number" id="guests" placeholder="Number of Guests" min="1" required>
+    <label style="display:block; text-align:left; margin-top:10px;">Check-in Date</label>
+    <input type="date" id="checkIn" required>
+    <label style="display:block; text-align:left; margin-top:10px;">Check-out Date</label>
+    <input type="date" id="checkOut" required>
+    <button onclick="bookRoom()">Confirm Booking</button>
+    <p><a href="index.html">Back to Home</a></p>
   </div>
 
-  <!-- Booking Details Box -->
-  <div class="details-container" id="detailsBox">
-    <h3>Booking Details</h3>
-    <p><strong>Name:</strong> <span id="dName"></span></p>
-    <p><strong>Number of People:</strong> <span id="dPeople"></span></p>
-    <p><strong>Date of Stay:</strong> <span id="dDate"></span></p>
-    <p><strong>Payment Method:</strong> <span id="dPayment"></span></p>
-    <p><strong>Payment Proof:</strong> <span id="dProof"></span></p>
-    
-    <button class="btn-download" onclick="downloadReceipt()">Download Receipt</button>
-  </div>
+  <script>
+    function bookRoom() {
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const roomType = document.getElementById('roomType').value;
+      const guests = document.getElementById('guests').value;
+      const checkIn = document.getElementById('checkIn').value;
+      const checkOut = document.getElementById('checkOut').value;
 
-<script>
-  const bookingForm = document.getElementById("bookingForm");
-  const detailsBox = document.getElementById("detailsBox");
-  const paymentSelect = document.getElementById("payment");
-  const paymentInfo = document.getElementById("paymentInfo");
-  const proofUpload = document.getElementById("proofUpload");
-  const paymentProofInput = document.getElementById("paymentProof");
+      if (!fullName || !email || !phone || !roomType || !guests || !checkIn || !checkOut) {
+        alert("Please complete all fields.");
+        return;
+      }
 
-  // Show payment info & proof upload
-  paymentSelect.addEventListener("change", function() {
-    if (this.value === "Gcash") {
-      paymentInfo.style.display = "block";
-      paymentInfo.innerHTML = "<strong>Gcash:</strong> 09464766208 (E.C)";
-      proofUpload.style.display = "block";
-    } else if (this.value === "Seabank") {
-      paymentInfo.style.display = "block";
-      paymentInfo.innerHTML = "<strong>Seabank:</strong> 19169025449 (J.C)";
-      proofUpload.style.display = "block";
-    } else {
-      paymentInfo.style.display = "none";
-      proofUpload.style.display = "none";
+      // Simple date validation
+      if (new Date(checkOut) <= new Date(checkIn)) {
+        alert("Check-out date must be after check-in date.");
+        return;
+      }
+
+      // Retrieve existing bookings
+      let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+      // Save new booking
+      bookings.push({
+        fullName, email, phone, roomType, guests,
+        checkIn, checkOut,
+        status: "Pending",
+        bookedAt: new Date().toLocaleString()
+      });
+
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      alert("Booking successful! We will contact you for confirmation.");
+      window.location.href = "index.html";
     }
-  });
-
-  // Handle Booking Submission
-  bookingForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const booking = {
-      name: document.getElementById("name").value,
-      people: document.getElementById("people").value,
-      date: document.getElementById("date").value,
-      payment: document.getElementById("payment").value,
-      proof: ""
-    };
-
-    // Attach payment proof if uploaded
-    if (paymentProofInput.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        booking.proof = e.target.result;
-        saveBooking(booking);
-      };
-      reader.readAsDataURL(paymentProofInput.files[0]);
-    } else {
-      saveBooking(booking);
-    }
-  });
-
-  // Save booking and display
-  function saveBooking(booking) {
-    // Check duplicate date
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
-    if (bookings.some(b => b.date === booking.date)) {
-      alert("⚠️ Booking for this date already exists! Please choose another date.");
-      return;
-    }
-
-    bookings.push(booking);
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-
-    // Display Details
-    document.getElementById("dName").innerText = booking.name;
-    document.getElementById("dPeople").innerText = booking.people;
-    document.getElementById("dDate").innerText = booking.date;
-    document.getElementById("dPayment").innerText = booking.payment;
-    document.getElementById("dProof").innerText = booking.proof ? "Proof Uploaded" : "No Proof";
-
-    detailsBox.style.display = "block";
-    alert("✅ Booking Confirmed!");
-  }
-
-  // Download Booking Receipt as PNG
-  function downloadReceipt() {
-    html2canvas(detailsBox).then(canvas => {
-      const link = document.createElement("a");
-      link.download = "Booking_Receipt.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
-  }
-</script>
-
+  </script>
 </body>
-                                  </html>
+      </html>
