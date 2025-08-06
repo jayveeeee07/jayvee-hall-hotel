@@ -9,129 +9,66 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background: url('assets/admin-bg.jpg') no-repeat center center/cover;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      min-height: 100vh; display: flex; flex-direction: column;
     }
     header {
-      background: rgba(0,0,0,0.7);
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 22px;
-      font-weight: bold;
+      background: rgba(0,0,0,0.7); color: white;
+      padding: 15px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 22px; font-weight: bold;
     }
     .notif-bell {
-      position: relative;
-      cursor: pointer;
+      position: relative; cursor: pointer; font-size: 24px;
     }
     .notif-bell::after {
       content: attr(data-count);
-      position: absolute;
-      top: -5px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 50%;
-      display: none;
+      position: absolute; top: -5px; right: -8px;
+      background: red; color: white; font-size: 12px; font-weight: bold;
+      padding: 2px 6px; border-radius: 50%; display: none;
     }
-    .notif-bell[data-count]:not([data-count="0"])::after {
-      display: block;
-      animation: pulse 1s infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-    .admin-container {
-      flex: 1;
-      padding: 20px;
-      overflow-x: auto;
-    }
+    .notif-bell[data-count]:not([data-count="0"])::after { display: block; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.3);} 100%{transform:scale(1);} }
+
+    .admin-container { flex: 1; padding: 20px; overflow-x: auto; }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
+      width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden;
     }
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-    th {
-      background: #333;
-      color: white;
-    }
+    th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
+    th { background: #333; color: white; position: sticky; top: 0; }
     tr:hover { background: #f2f2f2; }
-    button {
-      padding: 6px 12px;
-      border: none;
-      cursor: pointer;
-      border-radius: 5px;
-      margin: 2px;
-      font-size: 14px;
-    }
+
+    button { padding: 6px 12px; border: none; cursor: pointer; border-radius: 5px; margin: 2px; font-size: 14px; }
     .approve { background: #28a745; color: white; }
     .reject { background: #dc3545; color: white; }
     .details { background: #007bff; color: white; }
     .receipt { background: #6f42c1; color: white; }
+
     /* Modal */
     .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000;
     }
     .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 400px;
-      max-width: 90%;
-      position: relative;
-      animation: fadeIn 0.3s ease-in-out;
+      background: white; padding: 20px; border-radius: 10px;
+      width: 400px; max-width: 90%; position: relative; animation: fadeIn 0.3s ease-in-out;
     }
-    .close {
-      position: absolute;
-      top: 10px; right: 15px;
-      font-size: 22px;
-      cursor: pointer;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .close { position: absolute; top: 10px; right: 15px; font-size: 22px; cursor: pointer; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+
     .notif-popup {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #28a745;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      display: none;
-      z-index: 2000;
-      animation: fadeIn 0.5s ease-in-out;
+      position: fixed; top: 20px; right: 20px;
+      background: #28a745; color: white; padding: 12px 20px; border-radius: 6px;
+      display: none; z-index: 2000; animation: fadeIn 0.5s ease-in-out;
     }
     @media (max-width: 768px) {
-      table { font-size: 12px; }
-      th, td { padding: 8px; }
+      table { font-size: 12px; } th, td { padding: 8px; }
       .modal-content { width: 90%; }
+    }
+
+    /* Loader */
+    #loader {
+      display:none; text-align:center; padding:20px; font-weight:bold; color:white;
     }
   </style>
 </head>
@@ -141,6 +78,7 @@
   <div class="notif-bell" id="notifBell" data-count="0">🔔</div>
 </header>
 
+<div id="loader">Loading bookings...</div>
 <div class="admin-container">
   <table>
     <thead>
@@ -191,16 +129,21 @@
   const bookingTable = document.getElementById("bookingTable");
   const notifBell = document.getElementById("notifBell");
   const notifPopup = document.getElementById("notifPopup");
+  const loader = document.getElementById("loader");
+
   let lastBookingCount = 0;
   let bookings = [];
 
   function loadBookings(data) {
     bookingTable.innerHTML = "";
     bookings = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    bookings.sort((a,b)=> new Date(b.date) - new Date(a.date)); // Show latest first
+
     if (bookings.length === 0) {
       bookingTable.innerHTML = "<tr><td colspan='5'>No bookings yet</td></tr>";
       return;
     }
+
     bookings.forEach((b, index) => {
       bookingTable.innerHTML += `
         <tr>
@@ -229,9 +172,11 @@
     }
   }
 
-  // Listen for real-time updates
+  // Real-time listener
   const bookingsRef = ref(db, 'bookings');
+  loader.style.display = "block";
   onValue(bookingsRef, (snapshot) => {
+    loader.style.display = "none";
     const data = snapshot.val() || {};
     const currentCount = Object.keys(data).length;
     if (currentCount > lastBookingCount) {
@@ -241,6 +186,7 @@
     loadBookings(data);
   });
 
+  // Expose to window
   window.updateStatus = function(id, status) {
     update(ref(db, 'bookings/' + id), { status });
     alert(`Booking ${status}!`);
@@ -259,18 +205,18 @@
     document.getElementById("detailsModal").style.display = "none";
   }
 
-  window.downloadReceipt = async function(index) {
+  window.downloadReceipt = function(index) {
     const { jsPDF } = window.jspdf;
     const booking = bookings[index];
     const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
 
     const bg = new Image();
     bg.src = "assets/receipt-bg.jpg";
-    bg.onload = function() {
+    bg.onload = () => {
       pdf.addImage(bg, "JPEG", 0, 0, 420, 595);
       const logo = new Image();
       logo.src = "assets/logo.png";
-      logo.onload = function() {
+      logo.onload = () => {
         pdf.addImage(logo, "PNG", 160, 20, 100, 50);
         pdf.setFontSize(16);
         pdf.text("Jayvee Hall of Mansion - Booking Receipt", 30, 100);
@@ -284,12 +230,12 @@
         qr.addData(`Booking for ${booking.name || "Guest"} - ${booking.room} - ${booking.date}`);
         qr.make();
         const qrImg = qr.createDataURL();
-
         pdf.addImage(qrImg, "PNG", 300, 140, 80, 80);
+
         pdf.save(`Booking_Receipt_${booking.name || "Guest"}.pdf`);
       };
     };
   }
 </script>
 </body>
-  </html>
+</html>
