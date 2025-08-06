@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jayvee Hall of Mansion - Home</title>
   <link rel="stylesheet" href="style.css">
+
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       background: url('assets/bgindex.jpg') no-repeat center center fixed;
       background-size: cover;
       display: flex;
@@ -18,20 +19,29 @@
     }
 
     header {
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       text-align: center;
       padding: 20px;
-      font-size: 24px;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
 
     .home-container {
       flex: 1;
       max-width: 1200px;
-      margin: 20px auto;
-      background: rgba(0,0,0,0.5);
-      padding: 20px;
-      border-radius: 12px;
+      margin: 30px auto;
+      background: rgba(0,0,0,0.55);
+      padding: 25px;
+      border-radius: 15px;
       text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      animation: fadeIn 0.8s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .room-grid {
@@ -42,12 +52,14 @@
     }
 
     .room-card {
-      background: rgba(255,255,255,0.9);
-      color: #333;
+      background: rgba(255,255,255,0.95);
+      color: #222;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       transition: 0.3s;
+      display: flex;
+      flex-direction: column;
     }
 
     .room-card img {
@@ -57,22 +69,23 @@
     }
 
     .room-card:hover {
-      transform: scale(1.02);
+      transform: translateY(-5px);
     }
 
-    .room-card h3 { margin: 10px 0; }
-    .room-card p { margin: 5px 0 10px; }
+    .room-card h3 { margin: 12px 0 5px; }
+    .room-card p { margin: 0 0 10px; font-weight: bold; }
 
     .card-buttons { margin-bottom: 15px; }
     .card-buttons button {
       margin: 5px;
-      padding: 8px 12px;
+      padding: 8px 14px;
       border: none;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 6px;
       background: #333;
       color: white;
       font-size: 14px;
+      transition: 0.2s;
     }
     .card-buttons button:hover { background: #555; }
 
@@ -82,7 +95,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       justify-content: center;
       align-items: center;
       z-index: 1000;
@@ -90,12 +103,13 @@
 
     .modal-content {
       background: white;
-      padding: 20px;
+      padding: 25px;
       border-radius: 12px;
-      width: 400px;
+      width: 420px;
       max-width: 90%;
       text-align: center;
       position: relative;
+      animation: fadeIn 0.4s;
     }
 
     .modal-content h3 { color: #333; }
@@ -121,34 +135,36 @@
     }
 
     .notif {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       color: #fff;
       padding: 12px 20px;
       border-radius: 8px;
-      min-width: 200px;
+      min-width: 220px;
       text-align: center;
-      animation: fadeIn 0.5s;
+      animation: slideIn 0.5s;
     }
+
     .notif.approved { background: rgba(40,167,69,0.9); }
     .notif.rejected { background: rgba(220,53,69,0.9); }
 
-    @keyframes fadeIn {
+    @keyframes slideIn {
       from { opacity: 0; transform: translateX(50px); }
       to { opacity: 1; transform: translateX(0); }
     }
 
     /* Booking Status */
     .booking-status {
-      background: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.95);
       color: black;
       margin: 15px auto;
       padding: 15px;
       border-radius: 10px;
       max-width: 600px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
     }
 
     @media (max-width: 768px) {
-      header { font-size: 20px; }
+      header { font-size: 22px; }
       .room-card img { height: 150px; }
     }
   </style>
@@ -157,7 +173,7 @@
 
 <header>Welcome to Jayvee Hall of Mansion</header>
 
-<div class="home-container fade-in">
+<div class="home-container">
   <p>Experience luxury and comfort in the heart of Malungon, Sarangani. Explore our elegant rooms and choose the perfect stay for you.</p>
 
   <!-- Grid Layout for Rooms -->
@@ -241,10 +257,10 @@
   const db = getDatabase(app);
 
   const roomDetails = [
-    { title: "Room 101 - Deluxe Room", desc: "Our Deluxe Room offers comfort and elegance with a cozy king-size bed, complimentary Wi-Fi, and a modern bathroom. Perfect for solo travelers or couples.", price: "₱3,500 / night" },
-    { title: "Room 102 - Executive Suite", desc: "Executive Suite provides a luxurious experience with spacious interiors, a private lounge area, and premium amenities for your relaxing stay.", price: "₱5,200 / night" },
-    { title: "Room 103 - Family Room", desc: "Family Room is designed for groups and families, featuring multiple beds, entertainment options, and ample space for a comfortable stay.", price: "₱4,000 / night" },
-    { title: "Room 104 - Presidential Suite", desc: "The Presidential Suite is our finest offering with a majestic view, large living room, Jacuzzi, and VIP services for a lavish stay.", price: "₱8,000 / night" }
+    { title: "Room 101 - Deluxe Room", desc: "Our Deluxe Room offers comfort and elegance with a cozy king-size bed, complimentary Wi-Fi, and a modern bathroom.", price: "₱3,500 / night" },
+    { title: "Room 102 - Executive Suite", desc: "Executive Suite provides a luxurious experience with spacious interiors, a private lounge area, and premium amenities.", price: "₱5,200 / night" },
+    { title: "Room 103 - Family Room", desc: "Family Room is designed for groups and families, featuring multiple beds, entertainment options, and ample space.", price: "₱4,000 / night" },
+    { title: "Room 104 - Presidential Suite", desc: "The Presidential Suite is our finest offering with a majestic view, large living room, Jacuzzi, and VIP services.", price: "₱8,000 / night" }
   ];
 
   let selectedRoom = "";
@@ -269,7 +285,7 @@
     window.location.href = `booking.html?room=${encodeURIComponent(roomName)}`;
   }
 
-  // Load notifications from localStorage
+  // Load notifications
   function loadNotifications() {
     const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
     const notifContainer = document.getElementById("notifications");
@@ -287,7 +303,7 @@
     setTimeout(() => notifContainer.innerHTML = "", 5000);
   }
 
-  // Load user bookings from Firebase
+  // Show user's bookings
   const userEmail = localStorage.getItem("userEmail");
   const userBookingsDiv = document.getElementById("userBookings");
 
@@ -295,7 +311,7 @@
     return `
       <div class="booking-status">
         <strong>Room:</strong> ${booking.room}<br>
-        <strong>Date:</strong> ${booking.date}<br>
+        <strong>Date:</strong> ${booking.date || "N/A"}<br>
         <strong>Status:</strong> ${booking.status}
       </div>
     `;
@@ -306,9 +322,12 @@
     onValue(bookingsRef, (snapshot) => {
       userBookingsDiv.innerHTML = "";
       const data = snapshot.val();
+      const seenRooms = new Set();
+
       for (let key in data) {
         const booking = data[key];
-        if (booking.email === userEmail) {
+        if (booking.email === userEmail && !seenRooms.has(booking.room)) {
+          seenRooms.add(booking.room);
           userBookingsDiv.innerHTML += renderBooking(key, booking);
         }
       }
@@ -319,5 +338,6 @@
 
   window.onload = loadNotifications;
 </script>
+
 </body>
         </html>
