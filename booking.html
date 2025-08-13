@@ -1,15 +1,13 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
   <style>
     /* Global Styles */
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
@@ -48,10 +46,6 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-    }
-
-    .booking-form label {
-      display: none;
     }
 
     .booking-form input,
@@ -103,25 +97,19 @@
 
     /* Responsive */
     @media (max-width: 600px) {
-      .booking-container {
-        padding: 30px 20px;
-      }
-      .booking-container h2 {
-        font-size: 1.5rem;
-      }
+      .booking-container { padding: 30px 20px; }
+      .booking-container h2 { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
-  <header> Jayvee Hall of Mansion </header>
-  
   <div class="booking-container">
     <h2>Book Your Stay</h2>
     <form class="booking-form" id="bookingForm">
       <input type="text" id="name" placeholder="Full Name" required>
       <input type="email" id="email" placeholder="Email Address" required>
-      <input type="date" id="checkin" placeholder="Check-in Date" required>
-      <input type="date" id="checkout" placeholder="Check-out Date" required>
+      <input type="date" id="checkin" required>
+      <input type="date" id="checkout" required>
       <select id="room" required>
         <option value="" disabled selected>Select a Room</option>
         <option>Room 101 - Deluxe Room</option>
@@ -177,14 +165,6 @@
           message.textContent = "❌ Failed to submit booking. Please try again.";
         });
     });
-
-    <footer style="background: rgba(0,0,0,0.8); color: #fff; text-align: center; padding: 15px 10px; margin-top: auto;">
-  <div style="max-width: 1200px; margin: auto;">
-    <p style="margin: 5px 0; font-size: 14px;">© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
-    <p style="margin: 5px 0; font-weight: bold;">JHOM</p>
-  </div>
-</footer>
-    
   </script>
 </body>
 </html>
