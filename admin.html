@@ -1,137 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Jayvee Hall of Mansion</title>
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-    }
-
-    header {
-      background: #343a40;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    }
-
-    .booking {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px;
-      margin-bottom: 12px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border-left: 5px solid #0d6efd;
-    }
-
-    .booking-info {
-      flex: 1;
-    }
-
-    .booking-actions button {
-      margin-left: 10px;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .approve { background: #198754; color: white; }
-    .approve:hover { background: #157347; }
-    .reject { background: #dc3545; color: white; }
-    .reject:hover { background: #bb2d3b; }
-
-    .status {
-      font-weight: 600;
-      margin-top: 5px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Panel - Jayvee Hall of Mansion</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0,0,0,0.7);
+    font-size: 28px;
+    font-weight: bold;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  th, td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: left;
+  }
+  select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+  }
+  .message {
+    margin-top: 15px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #0f0;
+  }
+  footer {
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    text-align: center;
+    padding: 15px 10px;
+    margin-top: 40px;
+  }
+</style>
 </head>
 <body>
-  <header>Admin Panel - Manage Bookings</header>
-  <div class="container" id="bookingsList">
-    Loading bookings...
-  </div>
+<header>
+  <h1>Admin Panel - JHOM</h1>
+</header>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+<div id="bookingsContainer">
+  <table id="bookingsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Check-in</th>
+        <th>Check-out</th>
+        <th>Room</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Bookings will appear here -->
+    </tbody>
+  </table>
+  <div class="message" id="message"></div>
+</div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdMcz7H8k5QjQikD6ZAlf7kHw7BbUBO70",
-      authDomain: "jayveehallofmansion.firebaseapp.com",
-      databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
-      projectId: "jayveehallofmansion",
-      storageBucket: "jayveehallofmansion.firebasestorage.app",
-      messagingSenderId: "596113378063",
-      appId: "1:596113378063:web:ae6fa08175627727660c7a",
-      measurementId: "G-LY9QYJKZMX"
-    };
+<footer>
+  <p>© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
+</footer>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-    const bookingsList = document.getElementById("bookingsList");
-    const bookingsRef = ref(db, "bookings");
+const firebaseConfig = {
+  apiKey: "AIzaSyCdMcz7H8k5QjQikD6ZAlf7kHw7BbUBO70",
+  authDomain: "jayveehallofmansion.firebaseapp.com",
+  databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
+  projectId: "jayveehallofmansion",
+  storageBucket: "jayveehallofmansion.firebasestorage.app",
+  messagingSenderId: "596113378063",
+  appId: "1:596113378063:web:ae6fa08175627727660c7a",
+  measurementId: "G-LY9QYJKZMX"
+};
 
-    const renderBookings = (data) => {
-      bookingsList.innerHTML = "";
-      if (!data) {
-        bookingsList.innerHTML = "No bookings yet.";
-        return;
-      }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-      Object.entries(data).forEach(([id, booking]) => {
-        const div = document.createElement("div");
-        div.className = "booking";
+const bookingsTableBody = document.querySelector("#bookingsTable tbody");
+const messageDiv = document.getElementById("message");
 
-        div.innerHTML = `
-          <div class="booking-info">
-            <strong>${booking.room}</strong> <br>
-            ${booking.name} (${booking.email}) <br>
-            Check-in: ${booking.checkin} | Check-out: ${booking.checkout} <br>
-            <span class="status">Status: ${booking.status}</span>
-          </div>
-          <div class="booking-actions">
-            <button class="approve">Approve</button>
-            <button class="reject">Reject</button>
-          </div>
-        `;
+const bookingsRef = ref(db, "bookings");
 
-        const approveBtn = div.querySelector(".approve");
-        const rejectBtn = div.querySelector(".reject");
+onValue(bookingsRef, (snapshot) => {
+  bookingsTableBody.innerHTML = "";
+  snapshot.forEach((childSnap) => {
+    const booking = childSnap.val();
+    const key = childSnap.key;
 
-        approveBtn.onclick = () => {
-          update(ref(db, "bookings/" + id), { status: "approved" });
-        };
-        rejectBtn.onclick = () => {
-          update(ref(db, "bookings/" + id), { status: "rejected" });
-        };
+    const tr = document.createElement("tr");
 
-        bookingsList.appendChild(div);
-      });
-    };
+    tr.innerHTML = `
+      <td>${booking.name}</td>
+      <td>${booking.email}</td>
+      <td>${booking.checkin}</td>
+      <td>${booking.checkout}</td>
+      <td>${booking.room}</td>
+      <td>
+        <select data-key="${key}">
+          <option value="pending" ${booking.status === "pending" ? "selected" : ""}>Pending</option>
+          <option value="approved" ${booking.status === "approved" ? "selected" : ""}>Approved</option>
+          <option value="rejected" ${booking.status === "rejected" ? "selected" : ""}>Rejected</option>
+        </select>
+      </td>
+    `;
+    bookingsTableBody.appendChild(tr);
+  });
 
-    onValue(bookingsRef, (snapshot) => {
-      renderBookings(snapshot.val());
+  // Add event listeners to all select dropdowns
+  const selects = document.querySelectorAll("select[data-key]");
+  selects.forEach((select) => {
+    select.addEventListener("change", (e) => {
+      const key = e.target.getAttribute("data-key");
+      const newStatus = e.target.value;
+
+      update(ref(db, `bookings/${key}`), { status: newStatus })
+        .then(() => {
+          messageDiv.textContent = `✅ Booking status updated to "${newStatus}". Email notification sent automatically.`;
+          setTimeout(() => messageDiv.textContent = "", 4000);
+        })
+        .catch(() => {
+          messageDiv.textContent = "❌ Failed to update status. Try again.";
+        });
     });
-  </script>
+  });
+});
+</script>
 </body>
 </html>
