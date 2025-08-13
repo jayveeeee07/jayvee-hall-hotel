@@ -21,14 +21,6 @@
       min-height: 100vh;
       padding: 20px;
     }
-header {
-      background: rgba(0,0,0,0.7);
-      text-align: center;
-      padding: 20px;
-      font-size: 28px;
-      font-weight: bold;
-      letter-spacing: 1px;
-}
 
     /* Booking Container */
     .booking-container {
@@ -91,13 +83,6 @@ header {
       box-shadow: 0 6px 12px rgba(0,0,0,0.3);
     }
 
-    /* Message */
-    .message {
-      margin-top: 20px;
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
-
     /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
@@ -108,16 +93,12 @@ header {
     @media (max-width: 600px) {
       .booking-container { padding: 30px 20px; }
       .booking-container h2 { font-size: 1.5rem; }
-      header h1 { font-size: 22px; }
     }
-
-
   </style>
 </head>
 <body>
-  <header>
-    <h1>JAYVEE HALL OF MANSION</h1>
-  </header>
+  <!-- Header Placeholder -->
+  <div id="header-placeholder"></div>
 
   <div class="booking-container">
     <h2>Book Your Stay</h2>
@@ -135,15 +116,10 @@ header {
       </select>
       <button type="submit">Submit Booking</button>
     </form>
-    <div class="message" id="message"></div>
   </div>
 
-  <footer style="background: rgba(0,0,0,0.8); color: #fff; text-align: center; padding: 15px 10px; margin-top: auto;">
-  <div style="max-width: 1200px; margin: auto;">
-    <p style="margin: 5px 0; font-size: 14px;">© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
-    <p style="margin: 5px 0; font-weight: bold;">JHOM</p>
-  </div>
-  </footer>
+  <!-- Footer Placeholder -->
+  <div id="footer-placeholder"></div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
@@ -164,7 +140,6 @@ header {
     const db = getDatabase(app);
 
     const bookingForm = document.getElementById("bookingForm");
-    const message = document.getElementById("message");
 
     bookingForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -181,13 +156,22 @@ header {
 
       push(ref(db, "bookings"), booking)
         .then(() => {
-          message.textContent = "✅ Booking submitted successfully! We will notify you once approved.";
-          bookingForm.reset();
+          // Redirect to admin panel after successful submission
+          window.location.href = "admin.html";
         })
         .catch(() => {
-          message.textContent = "❌ Failed to submit booking. Please try again.";
+          alert("❌ Failed to submit booking. Please try again.");
         });
     });
+
+    // Load header and footer
+    fetch('header.html')
+      .then(res => res.text())
+      .then(data => document.getElementById('header-placeholder').innerHTML = data);
+
+    fetch('footer.html')
+      .then(res => res.text())
+      .then(data => document.getElementById('footer-placeholder').innerHTML = data);
   </script>
 </body>
 </html>
