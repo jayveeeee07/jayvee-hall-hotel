@@ -177,47 +177,7 @@
   <p>Experience luxury and comfort in the heart of Malungon, Sarangani. Explore our elegant rooms and choose the perfect stay for you.</p>
 
   <!-- Grid Layout for Rooms -->
-  <div class="room-grid">
-    <div class="room-card">
-      <img src="assets/room1.jpg" alt="Deluxe Room">
-      <h3>Room 101 - Deluxe Room</h3>
-      <p>₱3,500 / night</p>
-      <div class="card-buttons">
-        <button onclick="showRoomDetails(0)">View Details</button>
-        <button onclick="bookRoom('Room 101 - Deluxe Room')">Book Now</button>
-      </div>
-    </div>
-
-    <div class="room-card">
-      <img src="assets/room2.jpg" alt="Executive Suite">
-      <h3>Room 102 - Executive Suite</h3>
-      <p>₱5,200 / night</p>
-      <div class="card-buttons">
-        <button onclick="showRoomDetails(1)">View Details</button>
-        <button onclick="bookRoom('Room 102 - Executive Suite')">Book Now</button>
-      </div>
-    </div>
-
-    <div class="room-card">
-      <img src="assets/room3.jpg" alt="Family Room">
-      <h3>Room 103 - Family Room</h3>
-      <p>₱4,000 / night</p>
-      <div class="card-buttons">
-        <button onclick="showRoomDetails(2)">View Details</button>
-        <button onclick="bookRoom('Room 103 - Family Room')">Book Now</button>
-      </div>
-    </div>
-
-    <div class="room-card">
-      <img src="assets/room4.jpg" alt="Presidential Suite">
-      <h3>Room 104 - Presidential Suite</h3>
-      <p>₱8,000 / night</p>
-      <div class="card-buttons">
-        <button onclick="showRoomDetails(3)">View Details</button>
-        <button onclick="bookRoom('Room 104 - Presidential Suite')">Book Now</button>
-      </div>
-    </div>
-  </div>
+  <div class="room-grid" id="roomGrid"></div>
 
   <h3>Your Bookings:</h3>
   <div id="userBookings"></div>
@@ -226,12 +186,12 @@
 <!-- Modal for Room Details -->
 <div id="roomModal" class="modal">
   <div class="modal-content">
-    <span class="close" onclick="closeRoomModal()">&times;</span>
+    <span class="close" id="closeModal">&times;</span>
     <h3 id="roomTitle"></h3>
     <p id="roomDesc"></p>
     <p id="roomPrice"></p>
-    <button onclick="proceedToBooking()">Interested</button>
-    <button onclick="closeRoomModal()">Not Interested</button>
+    <button id="interestedBtn">Interested</button>
+    <button id="notInterestedBtn">Not Interested</button>
   </div>
 </div>
 
@@ -263,27 +223,50 @@
     { title: "Room 104 - Presidential Suite", desc: "The Presidential Suite is our finest offering with a majestic view, large living room, Jacuzzi, and VIP services.", price: "₱8,000 / night" }
   ];
 
+  const roomGrid = document.getElementById("roomGrid");
+  const roomModal = document.getElementById("roomModal");
+  const roomTitle = document.getElementById("roomTitle");
+  const roomDesc = document.getElementById("roomDesc");
+  const roomPrice = document.getElementById("roomPrice");
+  const closeModal = document.getElementById("closeModal");
+  const interestedBtn = document.getElementById("interestedBtn");
+  const notInterestedBtn = document.getElementById("notInterestedBtn");
+
   let selectedRoom = "";
 
-  function showRoomDetails(index) {
-    selectedRoom = roomDetails[index].title;
-    document.getElementById("roomTitle").innerText = roomDetails[index].title;
-    document.getElementById("roomDesc").innerText = roomDetails[index].desc;
-    document.getElementById("roomPrice").innerText = roomDetails[index].price;
-    document.getElementById("roomModal").style.display = "flex";
-  }
+  // Render room cards dynamically
+  roomDetails.forEach((room, index) => {
+    const card = document.createElement("div");
+    card.className = "room-card";
+    card.innerHTML = `
+      <img src="assets/room${index+1}.jpg" alt="${room.title}">
+      <h3>${room.title}</h3>
+      <p>${room.price}</p>
+      <div class="card-buttons">
+        <button class="viewBtn">View Details</button>
+        <button class="bookBtn">Book Now</button>
+      </div>
+    `;
+    roomGrid.appendChild(card);
 
-  function closeRoomModal() {
-    document.getElementById("roomModal").style.display = "none";
-  }
+    card.querySelector(".viewBtn").addEventListener("click", () => {
+      selectedRoom = room.title;
+      roomTitle.innerText = room.title;
+      roomDesc.innerText = room.desc;
+      roomPrice.innerText = room.price;
+      roomModal.style.display = "flex";
+    });
 
-  function proceedToBooking() {
+    card.querySelector(".bookBtn").addEventListener("click", () => {
+      window.location.href = `booking.html?room=${encodeURIComponent(room.title)}`;
+    });
+  });
+
+  closeModal.addEventListener("click", () => roomModal.style.display = "none");
+  notInterestedBtn.addEventListener("click", () => roomModal.style.display = "none");
+  interestedBtn.addEventListener("click", () => {
     window.location.href = `booking.html?room=${encodeURIComponent(selectedRoom)}`;
-  }
-
-  function bookRoom(roomName) {
-    window.location.href = `booking.html?room=${encodeURIComponent(roomName)}`;
-  }
+  });
 
   // Load notifications
   function loadNotifications() {
@@ -337,7 +320,8 @@
   }
 
   window.onload = loadNotifications;
+
 </script>
 
 </body>
-        </html>
+</html>
