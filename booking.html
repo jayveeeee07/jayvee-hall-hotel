@@ -1,79 +1,128 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
   <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Poppins', sans-serif;
+      margin: 0;
       background: url('assets/bgindex.jpg') no-repeat center center fixed;
       background-size: cover;
-      margin: 0;
-      color: white;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
+    /* Booking Container */
     .booking-container {
-      max-width: 600px;
-      margin: 60px auto;
-      padding: 30px;
-      background: rgba(0,0,0,0.65);
-      border-radius: 14px;
+      background: rgba(0,0,0,0.7);
+      padding: 40px 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
       text-align: center;
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
       animation: fadeIn 0.8s ease;
     }
 
-    .booking-container h2 { margin-bottom: 20px; }
+    .booking-container h2 {
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: 0.5px;
+    }
 
+    /* Form Styles */
     .booking-form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
 
-    .booking-form input, .booking-form select {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
+    .booking-form label {
+      display: none;
     }
 
-    .booking-form button {
-      padding: 12px;
+    .booking-form input,
+    .booking-form select {
+      padding: 14px;
+      border-radius: 10px;
       border: none;
-      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .booking-form input:focus,
+    .booking-form select:focus {
+      box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.4);
+    }
+
+    /* Button Styles */
+    .booking-form button {
+      padding: 14px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      background: #198754;
+      border: none;
+      background: linear-gradient(45deg, #198754, #157347);
       color: white;
-      transition: 0.3s;
+      transition: all 0.3s ease;
     }
 
-    .booking-form button:hover { background: #157347; }
+    .booking-form button:hover {
+      background: linear-gradient(45deg, #157347, #0f5c32);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
 
+    /* Message */
     .message {
-      margin-top: 15px;
+      margin-top: 20px;
       font-weight: 500;
+      font-size: 0.95rem;
     }
 
+    /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .booking-container {
+        padding: 30px 20px;
+      }
+      .booking-container h2 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
+  <header> Jayvee Hall of Mansion </header>
+  
   <div class="booking-container">
     <h2>Book Your Stay</h2>
     <form class="booking-form" id="bookingForm">
       <input type="text" id="name" placeholder="Full Name" required>
       <input type="email" id="email" placeholder="Email Address" required>
-      <input type="date" id="checkin" required>
-      <input type="date" id="checkout" required>
-      <select id="room">
+      <input type="date" id="checkin" placeholder="Check-in Date" required>
+      <input type="date" id="checkout" placeholder="Check-out Date" required>
+      <select id="room" required>
         <option value="" disabled selected>Select a Room</option>
         <option>Room 101 - Deluxe Room</option>
         <option>Room 102 - Executive Suite</option>
@@ -110,8 +159,8 @@
       e.preventDefault();
 
       const booking = {
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
         checkin: document.getElementById("checkin").value,
         checkout: document.getElementById("checkout").value,
         room: document.getElementById("room").value,
@@ -128,6 +177,14 @@
           message.textContent = "❌ Failed to submit booking. Please try again.";
         });
     });
+
+    <footer style="background: rgba(0,0,0,0.8); color: #fff; text-align: center; padding: 15px 10px; margin-top: auto;">
+  <div style="max-width: 1200px; margin: auto;">
+    <p style="margin: 5px 0; font-size: 14px;">© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
+    <p style="margin: 5px 0; font-weight: bold;">JHOM</p>
+  </div>
+</footer>
+    
   </script>
 </body>
-  </html>
+</html>
