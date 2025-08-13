@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+  <link rel="stylesheet"index.css">
   <style>
     /* Global Styles */
     * { box-sizing: border-box; }
@@ -15,22 +15,44 @@
       background-size: cover;
       color: #fff;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
     }
 
+    /* Glassy Container Base */
+    .glassy {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      padding: 20px 30px;
+    }
+
+    /* Header */
+    header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 1px;
+      display: inline-block;
+      padding: 15px 25px;
+    }
+    header .glassy {
+      display: inline-block;
+    }
+
     /* Booking Container */
     .booking-container {
-      background: rgba(0,0,0,0.7);
-      padding: 40px 30px;
-      border-radius: 16px;
       max-width: 500px;
       width: 100%;
       text-align: center;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      padding: 40px 30px;
       animation: fadeIn 0.8s ease;
     }
 
@@ -89,6 +111,25 @@
       font-size: 0.95rem;
     }
 
+    /* Footer */
+    footer {
+      width: 100%;
+      text-align: center;
+      margin-top: 30px;
+    }
+    footer .glassy-footer {
+      display: inline-block;
+      padding: 15px 25px;
+      border-radius: 16px;
+    }
+    footer p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    footer p:last-child {
+      font-weight: bold;
+    }
+
     /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
@@ -99,11 +140,19 @@
     @media (max-width: 600px) {
       .booking-container { padding: 30px 20px; }
       .booking-container h2 { font-size: 1.5rem; }
+      header h1 { font-size: 1.5rem; }
+      footer .glassy-footer { padding: 12px 20px; }
     }
   </style>
 </head>
 <body>
-  <div class="booking-container">
+  <header>
+    <div class="glassy">
+      <h1>JAYVEE HALL OF MANSION</h1>
+    </div>
+  </header>
+
+  <div class="booking-container glassy">
     <h2>Book Your Stay</h2>
     <form class="booking-form" id="bookingForm">
       <input type="text" id="name" placeholder="Full Name" required>
@@ -121,6 +170,13 @@
     </form>
     <div class="message" id="message"></div>
   </div>
+
+  <footer>
+    <div class="glassy glassy-footer">
+      <p>© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
+      <p>JHOM</p>
+    </div>
+  </footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
