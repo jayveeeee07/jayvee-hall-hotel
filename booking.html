@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Room - Jayvee Hall of Mansion</title>
-  <link rel="stylesheet"index.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
   <style>
     /* Global Styles */
     * { box-sizing: border-box; }
@@ -22,15 +22,6 @@
       padding: 20px;
     }
 
-    /* Glassy Container Base */
-    .glassy {
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      padding: 20px 30px;
-    }
-
     /* Header */
     header {
       width: 100%;
@@ -40,19 +31,23 @@
     header h1 {
       font-size: 2rem;
       letter-spacing: 1px;
+      background: rgba(0,0,0,0.7);
       display: inline-block;
-      padding: 15px 25px;
-    }
-    header .glassy {
-      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(5px);
     }
 
     /* Booking Container */
     .booking-container {
+      background: rgba(0,0,0,0.7);
+      padding: 40px 30px;
+      border-radius: 16px;
       max-width: 500px;
       width: 100%;
       text-align: center;
-      padding: 40px 30px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
       animation: fadeIn 0.8s ease;
     }
 
@@ -111,25 +106,6 @@
       font-size: 0.95rem;
     }
 
-    /* Footer */
-    footer {
-      width: 100%;
-      text-align: center;
-      margin-top: 30px;
-    }
-    footer .glassy-footer {
-      display: inline-block;
-      padding: 15px 25px;
-      border-radius: 16px;
-    }
-    footer p {
-      margin: 5px 0;
-      font-size: 14px;
-    }
-    footer p:last-child {
-      font-weight: bold;
-    }
-
     /* Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
@@ -141,18 +117,32 @@
       .booking-container { padding: 30px 20px; }
       .booking-container h2 { font-size: 1.5rem; }
       header h1 { font-size: 1.5rem; }
-      footer .glassy-footer { padding: 12px 20px; }
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      text-align: center;
+      padding: 15px 10px;
+      margin-top: auto;
+      width: 100%;
+    }
+    footer p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    footer p:last-child {
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="glassy">
-      <h1>JAYVEE HALL OF MANSION</h1>
-    </div>
+    <h1>JAYVEE HALL OF MANSION</h1>
   </header>
 
-  <div class="booking-container glassy">
+  <div class="booking-container">
     <h2>Book Your Stay</h2>
     <form class="booking-form" id="bookingForm">
       <input type="text" id="name" placeholder="Full Name" required>
@@ -172,7 +162,7 @@
   </div>
 
   <footer>
-    <div class="glassy glassy-footer">
+    <div style="max-width: 1200px; margin: auto;">
       <p>© 2025 Jayvee Hall of Mansion. All Rights Reserved.</p>
       <p>JHOM</p>
     </div>
