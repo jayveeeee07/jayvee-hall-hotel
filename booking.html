@@ -6,147 +6,106 @@
 <title>Book a Room - Jayvee Hall of Mansion</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
 <style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: #f4f4f4;
+  * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
-  header {
+
+  body, html {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header, footer {
     background: #121212;
     color: #fff;
     text-align: center;
-    padding: 20px 0;
-    font-size: 26px;
+    padding: 20px;
     font-weight: 600;
+    flex-shrink: 0;
   }
+
   main {
-    max-width: 600px;
-    margin: 30px auto;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .form-container {
     background: #fff;
-    padding: 25px 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
-  h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #121212;
-  }
-  form {
+    padding: 25px 30px;
+    width: 100%;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
     gap: 15px;
   }
-  input, select {
+
+  h2 {
+    text-align: center;
+    color: #121212;
+    margin-bottom: 25px;
+  }
+
+  input, select, button {
+    font-size: 16px;
     padding: 10px 15px;
     border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 16px;
+    border: none; /* borderless */
     outline: none;
   }
+
   button {
-    padding: 12px;
-    border: none;
     background: #121212;
     color: #fff;
-    font-size: 16px;
-    border-radius: 6px;
     cursor: pointer;
     transition: 0.3s;
   }
+
   button:hover {
     background: #333;
   }
+
   .message {
-    margin-top: 10px;
     text-align: center;
-    font-weight: 500;
     color: green;
-  }
-  footer {
-    background: #121212;
-    color: #fff;
-    text-align: center;
-    padding: 15px 10px;
-    margin-top: 40px;
+    font-weight: 500;
   }
 </style>
 </head>
 <body>
 
-<header>
-  Jayvee Hall of Mansion - Book a Room
-</header>
+<header>Jayvee Hall of Mansion - Book a Room</header>
 
 <main>
-  <h2>Booking Form</h2>
-  <form id="bookingForm">
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email Address" required>
-    <input type="date" id="checkin" placeholder="Check-in Date" required>
-    <input type="date" id="checkout" placeholder="Check-out Date" required>
-    <select id="room" required>
-      <option value="">Select Room Type</option>
-      <option value="Single">Single</option>
-      <option value="Double">Double</option>
-      <option value="Suite">Suite</option>
-    </select>
-    <button type="submit">Submit Booking</button>
-    <div class="message" id="message"></div>
-  </form>
+  <div class="form-container">
+    <h2>Booking Form</h2>
+    <form id="bookingForm">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="date" id="checkin" placeholder="Check-in Date" required>
+      <input type="date" id="checkout" placeholder="Check-out Date" required>
+      <select id="room" required>
+        <option value="">Select Room Type</option>
+        <option value="Single">Single</option>
+        <option value="Double">Double</option>
+        <option value="Suite">Suite</option>
+      </select>
+      <button type="submit">Submit Booking</button>
+      <div class="message" id="message"></div>
+    </form>
+  </div>
 </main>
 
-<footer>
-  © 2025 Jayvee Hall of Mansion. All Rights Reserved.
-</footer>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCdMcz7H8k5QjQikD6ZAlf7kHw7BbUBO70",
-  authDomain: "jayveehallofmansion.firebaseapp.com",
-  databaseURL: "https://jayveehallofmansion-default-rtdb.firebaseio.com",
-  projectId: "jayveehallofmansion",
-  storageBucket: "jayveehallofmansion.firebasestorage.app",
-  messagingSenderId: "596113378063",
-  appId: "1:596113378063:web:ae6fa08175627727660c7a",
-  measurementId: "G-LY9QYJKZMX"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const bookingForm = document.getElementById('bookingForm');
-const messageDiv = document.getElementById('message');
-
-bookingForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  const bookingData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    checkin: document.getElementById('checkin').value,
-    checkout: document.getElementById('checkout').value,
-    room: document.getElementById('room').value,
-    status: 'pending' // default status
-  };
-
-  push(ref(db, 'bookings'), bookingData)
-    .then(() => {
-      messageDiv.textContent = "✅ Booking submitted successfully!";
-      bookingForm.reset();
-      setTimeout(() => messageDiv.textContent = "", 4000);
-      // redirect to admin panel
-      window.location.href = 'admin.html';
-    })
-    .catch(() => {
-      messageDiv.textContent = "❌ Failed to submit booking. Try again.";
-    });
-});
-</script>
+<footer>© 2025 Jayvee Hall of Mansion. All Rights Reserved.</footer>
 
 </body>
 </html>
